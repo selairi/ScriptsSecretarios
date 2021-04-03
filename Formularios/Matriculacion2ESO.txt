@@ -1,0 +1,80 @@
+Titulo: Matrícula 2º ESO
+LateralPDF: 2º ESO:
+ {Apellido1} {Apellido2}, {Nombre}
+CabeceraPDF: IES Villablanca. Matrícula 2º ESO.
+ {curso_academico}
+PDF: 
+ this.datosIES = "IES VILLABLANCA\nC/Villablanca, 79 - 28032 Madrid\nTeléfono 91 775 22 14 Fax 91 778 85 77\nCorreo ies.villablanca.madrid@educa.madrid.org\nC.C. 28039891";
+ this.cabeceraEstandar = false;
+ this.generarPDFEstandar(campos);
+MensajeFormularioAceptado: Se va a generar un fichero PDF que se descargará en su equipo. Imprima dos copias y llévelas a la Secretaría del Centro con el resto de documentación solicitada o guarde el fichero para introducirlo en la Secretaría Virtual.
+	IMPORTANTE: Repase bien la selección que ha realizado de las asignaturas optativas.
+Incluir: pie_de_firma.txt
+
+
+Id: Seccion1
+EtiquetaWeb: Matrícula 2º ESO
+Tipo: Seccion
+
+Id: Label1
+Tipo: Etiqueta
+EtiquetaPDF: 
+EtiquetaWeb: 
+	<p>Junto a la solicitud de matrícula, que tiene a continuación, hay que que adjuntar FOTOCOPIAS y original para cotejo de la siguiente documentación:</p>
+	<ul> 
+	<li>DNI/NIE del alumno. En el caso de tener DNI o NIE.</li>
+	<li>DNI/NIE del padre, madre o tutor</li>
+	<li>Boletín de notas del curso anterior</li>
+	</ul>
+	<p>En el caso de ser alumno nuevo en el centro deberá añadir:</p>
+	<ul>
+	<li>Certificación académica oficial de los estudios realizados hasta ahora</li>
+	<li>El libro de familia</li>
+	</ul>
+	<p><strong>La elección de los itinerarios y asignaturas optativas es un acto de responsabilidad para el futuro académico del alumno. En la página web del centro se ofrece la información necesaria para tomar dichas decisiones:<a href="https://site.educa.madrid.org/ies.villablanca.madrid/index.php/177-2/" target="_blank"> Haz clic aquí.</a></strong></p>
+	<p><strong>Tratamiento de los datos personales:</strong></p>
+	<p>En el siguiente enlace hay información sobre protección de los datos de carácter personal recogidos en esta instancia:</p>
+	<a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+
+Incluir: datos_personales_eso.txt
+
+Id: Seccion_Asignaturas
+EtiquetaWeb: Asignaturas
+Tipo: Seccion
+
+
+Id: Asignaturas_obligatorias
+Tipo: Etiqueta
+EtiquetaWeb: Asignaturas Obligatorias: Física y Química / Geografía e Historia / Educación Física / Educación Plástica y Visual / Lengua Castellana y Literatura / Lengua Extranjera / Matemáticas / Tecnología, Programación y Robótica / Música
+
+Id: Asignaturas_optativas
+EtiquetaWeb: Asignaturas optativas
+Tipo: Reorden
+Valor: Segunda lengua extranjera (Francés)
+	Recuperación de lengua
+	Recuperación de matemáticas
+	Deporte
+Observaciones: El alumno sólo cursará una de las asignaturas optativas. Ordene usando los botones de <i>Subir</i> y <i>Bajar</i> por orden de preferencia, siendo la que está más arriba su opción favorita. <b>La elección de la primera opción, no asegura que esta vaya a ser la asignatura cursada.</b>
+
+
+Id: Religion_Valores
+EtiquetaWeb: Seleccione entre Religión / Valores éticos
+Tipo: Desplegable
+Valor: Valores éticos
+	Religión
+
+
+
+Id: PoliticaPrivacidad
+EtiquetaWeb: He leído y acepto la POLÍTICA DE PRIVACIDAD EN C.D. DE LA C. DE MADRID
+Tipo: Desplegable
+Valor:
+ Sí
+Obligatorio: Sí
+Observaciones: <a target="_blank" href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+
+
+
+
+
+

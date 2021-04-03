@@ -1,0 +1,1067 @@
+<!doctype html>
+<head>
+	<meta charset='utf8'/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<title>Matrícula 2º ESO</title>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+<script>
+var _datos = {
+	formulario: "",
+	botonEnviar: null,
+	canvasFoto:  null,
+	inputFoto: null,
+	inputFileFoto: null,
+	campos: [],
+	ultimoCampo: "",
+	tagConInputId: null,
+	datosIES: "",
+	piePagina: "",
+    mensaje_formulario_aceptado: "Se va a generar un archivo PDF que va a ser descargado.",
+	cabeceraAddCurso: false,
+	cabeceraEstandar: true,
+	generarPDf: function() {}
+};
+
+_datos.dibujarBanderaComunidad = function (x, y) {
+	// Se dibuja la bandera
+	this.doc.setFont("zapfdingbats", "normal");
+	this.doc.setFontSize(10);
+	// Carácter de la estrella: H
+	this.doc.rect(x, y, 16.5, 10);
+	this.doc.text("H H H H", 1+x, 5 + y);
+	this.doc.text("H H H", 3+x, 8 + y);
+}
+
+_datos.dibujarBanderaEuropa = function (x, y) {
+	// Se dibuja la bandera
+	this.doc.setFont("zapfdingbats", "normal");
+	this.doc.setFontSize(6);
+	// Carácter de la estrella: H
+	this.doc.rect(x, y, 16.5, 10);
+	for(var i=0.0; i<12.0; i+=1.0) {
+		this.doc.text("H", x + 16.5/2.0 -1 + 4.0*Math.cos(i*Math.PI/6.0), y + 5 +1 + 4.0*Math.sin(i*Math.PI/6.0));
+	}
+}
+
+_datos.cursoActual = function () {
+	var d = new Date();
+	var mes = d.getMonth() + 1;
+	var agno = d.getFullYear();
+	var curso = "Curso ";
+	var agno_inicial = agno;
+	var agno_final = agno + 1;
+	if(mes < 6) {
+		agno_inicial = agno - 1;
+		agno_final = agno;
+	}
+	return curso + agno_inicial + "/" + agno_final;
+}
+
+_datos.cabeceraPDF = function (textoCabecera, textoLateral, numeroPagina) {
+	var doc = this.doc;
+	doc.setTextColor(100);
+	doc.setDrawColor(100);
+	this.dibujarBanderaComunidad(177, 10);
+	//this.dibujarBanderaEuropa(177, 10);
+	doc.setFont("helvetica", "bold");
+	doc.setFontSize(10);
+	this.printXY("Comunidad de Madrid", 160, 25);
+	doc.setFont("helvetica", "bold");
+	doc.setFontSize(12);
+	if(this.cabeceraAddCurso)
+		textoCabecera += this.cursoActual();
+	this.printXY(textoCabecera, 62, 12, 95);
+	doc.setFontSize(10);
+	var pageHeight = doc.internal.pageSize.height;
+	var pageWidth = doc.internal.pageSize.width;
+	doc.setFont("helvetica", "normal");
+	doc.text("Página " + numeroPagina, pageWidth - 50, pageHeight-7);
+	doc.setFontSize(18);
+	doc.setTextColor(0);
+	doc.setDrawColor(0);
+	//doc.text(textoLateral, 11, pageHeight - 50, {angle: 90});
+	this.printXYRotado(textoLateral, 11, pageHeight - 50, 250, 90);
+	doc.setTextColor(100);
+	doc.setDrawColor(100);
+	doc.setFont(this.fontFamily, this.fontStyle);
+	doc.setFontSize(this.fontSize);
+	if(!this.cabeceraEstandar) {
+		doc.setFont("helvetica", "normal");
+		doc.setFontSize(6);
+		this.printXY(this.datosIES, 15, 12, 50);
+	}
+	this.y = this.margenSuperior;
+	this.x = this.margenIzquierdo;
+	doc.setFont(this.fontFamily, this.fontStyle);
+	doc.setFontSize(this.fontSize);
+	doc.setTextColor(0);
+	doc.setDrawColor(0);
+}
+
+_datos.cabecera = function () {
+	this.cabeceraPDF(this.textoCabecera, this.textoLateral, this.numeroPagina);
+}
+
+_datos.piePDF = function () {
+	this.doc.setFontSize(this.fontSize - 2);
+	this.print("");
+	this.print(this.piePagina);
+}
+
+_datos.nuevaPagina = function () {
+	var doc = this.doc;
+	doc.addPage();
+	this.numeroPagina++;
+	this.y = this.margenSuperior;
+}
+
+_datos.print = function (texto) {
+	var doc = this.doc;
+	var pageHeight = doc.internal.pageSize.height;
+	var pageWidth = doc.internal.pageSize.width;
+	this.printXY(texto, this.x, this.y, pageWidth - this.margenIzquierdo - this.margenDerecho);
+}
+
+_datos.printXY = function (texto, x, y, anchura) {
+	var doc = this.doc;
+	this.y = y;
+	this.x = x;
+	var pageHeight = doc.internal.pageSize.height;
+	var pageWidth = doc.internal.pageSize.width;
+	var lines = doc.splitTextToSize(texto, anchura);
+	for(var j=0; j<lines.length; j++){
+		doc.text(lines[j], this.x, this.y);
+		this.y += this.doc.getTextDimensions("Texto").h*1.1 + this.interlineado;
+		if(this.y > (pageHeight - this.margenInferior)) {
+			doc.addPage();
+			this.numeroPagina++;
+			this.cabeceraPDF(this.textoCabecera, this.textoLateral, this.numeroPagina);
+			this.y = this.margenSuperior;
+		}
+	}
+	this.x = this.margenIzquierdo;
+}
+
+_datos.printXYRotado = function (texto, x, y, anchura, angulo) {
+	var doc = this.doc;
+	this.y = y;
+	this.x = x;
+	var pageHeight = doc.internal.pageSize.height;
+	var lines =doc.splitTextToSize(texto, anchura);
+	for(var j=0; j<lines.length; j++){
+		doc.text(lines[j], this.x, this.y, {angle: angulo});
+		this.x += this.doc.getTextDimensions("Texto").h*1.1 + this.interlineado;
+	}
+	this.x = this.margenIzquierdo;
+}
+
+
+_datos.initPDF = function () {
+	this.doc = new jsPDF({
+		 orientation: 'p',
+		 unit: 'mm',
+		 format: 'a4',
+		 putOnlyUsedFonts:true
+	});
+
+	var margenIzquierdo = margenDerecho = 20;
+	var interlineado = 5;
+	this.margenDerecho = margenDerecho;
+	this.margenIzquierdo = margenIzquierdo;
+	this.margenInferior = 30;
+	this.margenSuperior = 30;
+	this.interlineado = interlineado;
+	this.numeroPagina = 1;
+	this.y = this.margenSuperior;
+	this.x = this.margenIzquierdo;
+	this.textoCabecera = "IES Villablanca";
+	this.textoLateral = "";
+	this.fontSize = 10;
+	this.fontFamily = "helvetica";
+	this.fontStyle = "normal";
+	this.doc.setFont(this.fontFamily, this.fontStyle);
+	this.doc.setFontSize(this.fontSize);
+	//this.interlineado = this.doc.getTextDimensions('Text').h * 1.3;
+	this.interlineado = 0;
+}
+
+
+_datos.generarPDFEstandar = function () {
+	var doc = this.doc;
+	var pageHeight = doc.internal.pageSize.height;
+	var pageWidth = doc.internal.pageSize.width;
+
+	this.cabeceraPDF(this.textoCabecera, this.textoLateral, this.numeroPagina);
+	doc.setFont(this.fontFamily, this.fontStyle);
+	doc.setFontSize(this.fontSize);
+	for(var i=0; i<items.length; i++) {
+		var linea = '';
+		var campo = items[i];
+		doc.setFontSize(this.fontSize);
+        var etiqueta = campo.etiqueta_pdf != null ? campo.etiqueta_pdf : campo.etiqueta_web;
+        if( campo.etiqueta_pdf != null && campo.etiqueta_pdf.length == 0 ) {
+		    etiqueta = null;
+        }
+        if(etiqueta == null) {
+            // El campo no debe aparecer
+        } else if(campo.tipo === "Seccion") {
+			// Es una sección
+			this.print("");
+			doc.setFont(this.fontFamily, "bold");
+			doc.setFontSize(this.fontSize + 2);
+		    linea += etiqueta;
+		    this.print(linea);
+			doc.setFont(this.fontFamily, "normal");
+		} else if(campo.tipo === "Etiqueta") {
+			linea += etiqueta;
+			this.print("");
+			this.print(linea);
+		} else if(campo.tipo === "Foto") {
+			this.print(etiqueta + ": ");
+			var canvas = document.getElementById("_canvas_" + campo.id);
+			var valor = canvas.toDataURL("image/jpeg");
+			doc.addImage(valor, 'JPEG', this.x, this.y, 16, 20);
+			this.y += 20;
+			this.print("");
+		} else if(campo.tipo === "Archivo") {
+			// No se incluyen los archivos en el PDF
+		} else if(campo.tipo === "Checkbox") {
+			var valor = document.forms["formulario"][campo.id].checked;
+			this.print(etiqueta + ": " + (valor ? "Sí" : "No"));
+		} else {
+			var valor = document.forms["formulario"][campo.id].value.trim();
+			this.print(etiqueta + ": " + valor);
+		}
+	}
+	this.piePDF();
+	doc.save('a4.pdf');
+}
+
+_datos.generarPDF = function (campos) {
+	this.generarPDFEstandar();
+}
+
+
+function onCargarFoto(id) {
+	//console.log("onCargarFoto");
+	let file = document.getElementById(id);
+	file.campoVacio = false;
+	createImageBitmap(file.files[0]).then(function(img) {
+		var canvas =  document.getElementById("_canvas_" + id)
+		var ctx = canvas.getContext("2d");
+		ctx.drawImage(img, 0, 0, 160, 200);
+	});
+}
+
+function reorder_intercambiar_opcion(id_actual, id_anterior) {
+    var valor_actual = document.forms["formulario"][id_actual];
+    var valor_anterior = document.forms["formulario"][id_anterior];
+    var aux = valor_actual.value;
+    valor_actual.value = valor_anterior.value;
+    valor_anterior.value = aux;
+}
+
+function reemplazar(texto, campos)
+{
+	for(var i=0; i<campos.length; i++) {
+		var campo = campos[i];
+		if(! (campo.tipo === "Seccion" || campo.tipo === "Etiqueta")) {
+			var valor = document.forms["formulario"][campo.id].value.trim();
+			texto = texto.replace(new RegExp('\\{' + campo.id + '\\}','g'), valor);
+			texto = texto.replace(new RegExp('\\{curso_academico\\}','g'), _datos.cursoActual());
+		}
+	}
+	return texto;
+}
+
+
+
+function generar()
+{
+	// Se verifica que todos los campos obligatorios hayan sido completados
+	var ok = true;
+	var last_focus = null;
+	for(var i=0; i < checkEntryList.length; i++) {
+		var id = checkEntryList[i];
+		var e = document.forms["formulario"][id];
+		var etiqueta = document.getElementById("_etiqueta_" +id);
+		if(e.value.trim().length == 0 || e.type === 'file' && (e.campoVacio || e.files.length == 0)) {
+			ok = false;
+			if(last_focus == null)
+				last_focus = e;
+			etiqueta.classList.add("w3-red");
+			if("classList" in e)
+			 e.classList.add("w3-red");
+		} else {
+			etiqueta.classList.remove("w3-red");
+			if("classList" in e)
+			 e.classList.remove("w3-red");
+		}
+	}
+
+	if(ok) {
+		// Se puede generar el formulario
+        alert(_datos.mensaje_formulario_aceptado);
+		_datos.initPDF();
+		_datos.textoCabecera = reemplazar(formulario.cabecera, items);
+		_datos.textoLateral = reemplazar(formulario.lateral, items);
+		_datos.piePagina = reemplazar(formulario.pie, items);
+		var campos = {};
+		for(var i=0; i<items.length; i++) {
+			var campo = items[i];
+			if(! (campo.tipo === "Seccion" || campo.tipo === "Etiqueta" || campo.tipo === "Foto")) {
+				var valor = document.forms["formulario"][campo.id].value.trim();
+				campos[campo.id] = valor;
+			} else if(campo.tipo === "Foto") {
+				//var file = document.getElementById(campo.id);
+				var canvas =  document.getElementById("_canvas_" + campo.id);
+				campos[campo.id] = canvas.toDataURL("image/jpeg");
+				//file.value;
+			}
+		}
+		_datos.generarPDF(campos);
+
+	} else {
+		alert("Hay campos sin completar o completados de forma errónea. Estos campos están marcados en rojo.");
+		last_focus.focus();
+	}
+
+	return false;
+}
+
+
+</script>
+<form name='formulario' onsubmit='return generar()' >
+<h1 class='w3-blue'>Matrícula 2º ESO</h1>
+<div class='w3-panel w3-border'>
+
+		</div>
+		<div class='w3-panel w3-border w3-light-grey'>
+			<h2>Matrícula 2º ESO</h2>
+	
+		<p>
+			<p>Junto a la solicitud de matrícula, que tiene a continuación, hay que que adjuntar FOTOCOPIAS y original para cotejo de la siguiente documentación:</p>
+<ul> 
+<li>DNI/NIE del alumno. En el caso de tener DNI o NIE.</li>
+<li>DNI/NIE del padre, madre o tutor</li>
+<li>Boletín de notas del curso anterior</li>
+</ul>
+<p>En el caso de ser alumno nuevo en el centro deberá añadir:</p>
+<ul>
+<li>Certificación académica oficial de los estudios realizados hasta ahora</li>
+<li>El libro de familia</li>
+</ul>
+<p><strong>La elección de los itinerarios y asignaturas optativas es un acto de responsabilidad para el futuro académico del alumno. En la página web del centro se ofrece la información necesaria para tomar dichas decisiones:<a href="https://site.educa.madrid.org/ies.villablanca.madrid/index.php/177-2/" target="_blank"> Haz clic aquí.</a></strong></p>
+<p><strong>Tratamiento de los datos personales:</strong></p>
+<p>En el siguiente enlace hay información sobre protección de los datos de carácter personal recogidos en esta instancia:</p>
+<a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+
+		</p>
+	
+		</div>
+		<div class='w3-panel w3-border w3-light-grey'>
+			<h2>Datos personales</h2>
+	
+		<p>
+			Datos personales del alumno
+		</p>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Foto'>* Foto del alumno</label>:<br/> 
+		<input type='file' accept="image/*" onchange = 'onCargarFoto("Foto")'
+			name='Foto' id='Foto' class='w3-input  w3-border' value=''/><br/>
+		<canvas id='_canvas_Foto' width='160' height='200'></canvas>
+	 <br/>
+			La foto debe ser con el fondo blanco, tomada en formato vertical. Sólo se debe ver la cara del alumno.
+</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Apellido1'>* Primer Apellido</label>:<br/> 
+		<input type='text' name='Apellido1' id='Apellido1' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Apellido2'> Segundo Apellido</label>:<br/> 
+		<input type='text' name='Apellido2' id='Apellido2' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Nombre'>* Nombre</label>:<br/> 
+		<input type='text' name='Nombre' id='Nombre' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Sexo'>* Sexo</label>:<br/> 
+	 <select id="Sexo" name="Sexo">
+	<option value=''></option><option value='Hombre'>Hombre</option><option value='Mujer'>Mujer</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_DniTipo'>* DNI/NIE/Pasap.</label>:<br/> 
+	 <select id="DniTipo" name="DniTipo">
+	<option value=''></option><option value='DNI'>DNI</option><option value='NIE'>NIE</option><option value='Pasaporte'>Pasaporte</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Dni'>* Número de DNI/NIE/Pasap.</label>:<br/> 
+		<input type='text' name='Dni' id='Dni' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Pais'>* País de Nacimiento</label>:<br/> 
+	 <select id="Pais" name="Pais">
+	<option value='E España'>E España</option><option value='R Rumania'>R Rumania</option><option value='EC ECUADOR'>EC ECUADOR</option><option value='DOM Rep.Dominicana'>DOM Rep.Dominicana</option><option value='PE Peru'>PE Peru</option><option value='PL Polonia'>PL Polonia</option><option value='CO COLOMBIA'>CO COLOMBIA</option><option value='MA MARRUECOS'>MA MARRUECOS</option><option value='RUS Rusia'>RUS Rusia</option><option value='I Italia'>I Italia</option><option value='BG BULGARIA'>BG BULGARIA</option><option value='PY PARAGUAY'>PY PARAGUAY</option><option value='CV CABO VERDE'>CV CABO VERDE</option><option value='RA Argentina'>RA Argentina</option><option value='BO BOLIVIA'>BO BOLIVIA</option><option value='HD HONDURAS'>HD HONDURAS</option><option value='AF	AFGANISTAN'>AF	AFGANISTAN</option><option value='AL	ALBANIA'>AL	ALBANIA</option><option value='D	ALEMANIA'>D	ALEMANIA</option><option value='AND	ANDORRA'>AND	ANDORRA</option><option value='AO	ANGOLA'>AO	ANGOLA</option><option value='ATA	ANTARTIDA'>ATA	ANTARTIDA</option><option value='AB	ANTIGUA Y BARBUDA'>AB	ANTIGUA Y BARBUDA</option><option value='ASA	ARABIA SAUDITA'>ASA	ARABIA SAUDITA</option><option value='DZ	ARGELIA'>DZ	ARGELIA</option><option value='RA	ARGENTINA'>RA	ARGENTINA</option><option value='AR	ARMENIA'>AR	ARMENIA</option><option value='AUS	AUSTRALIA'>AUS	AUSTRALIA</option><option value='A	AUSTRIA'>A	AUSTRIA</option><option value='AZ	AZERBAIYAN'>AZ	AZERBAIYAN</option><option value='BS	BAHAMAS'>BS	BAHAMAS</option><option value='BRN	BAHREIN'>BRN	BAHREIN</option><option value='BD	BANGLADESH'>BD	BANGLADESH</option><option value='BDS	BARBADOS'>BDS	BARBADOS</option><option value='B	BELGICA'>B	BELGICA</option><option value='BH	BELICE'>BH	BELICE</option><option value='DY	BENIN'>DY	BENIN</option><option value='BHU	BHUTAN'>BHU	BHUTAN</option><option value='BIE	BIELORRUSIA'>BIE	BIELORRUSIA</option><option value='BO	BOLIVIA'>BO	BOLIVIA</option><option value='BOH	BOSNIA HERZEGOVINA'>BOH	BOSNIA HERZEGOVINA</option><option value='RB	BOTSWANA'>RB	BOTSWANA</option><option value='BR	BRASIL'>BR	BRASIL</option><option value='BRU	BRUNEI DARUSSALAM'>BRU	BRUNEI DARUSSALAM</option><option value='BG	BULGARIA'>BG	BULGARIA</option><option value='HV	BURKINA FASSO'>HV	BURKINA FASSO</option><option value='RU	BURUNDI'>RU	BURUNDI</option><option value='CV	CABO VERDE'>CV	CABO VERDE</option><option value='K	CAMBOYA'>K	CAMBOYA</option><option value='CA	CAMERUN'>CA	CAMERUN</option><option value='CDN	CANADA'>CDN	CANADA</option><option value='TD	CHAD'>TD	CHAD</option><option value='RCH	CHILE'>RCH	CHILE</option><option value='RPC	CHINA'>RPC	CHINA</option><option value='CY	CHIPRE'>CY	CHIPRE</option><option value='CO	COLOMBIA'>CO	COLOMBIA</option><option value='CAM	COMORES'>CAM	COMORES</option><option value='RCB	CONGO'>RCB	CONGO</option><option value='CI	COSTA DE MARFIL'>CI	COSTA DE MARFIL</option><option value='CR	COSTA RICA'>CR	COSTA RICA</option><option value='CRO	CROACIA'>CRO	CROACIA</option><option value='C	CUBA'>C	CUBA</option><option value='DK	DINAMARCA'>DK	DINAMARCA</option><option value='DJ	DJIBOUTI'>DJ	DJIBOUTI</option><option value='WD	DOMINICA'>WD	DOMINICA</option><option value='EC	ECUADOR'>EC	ECUADOR</option><option value='ET	EGIPTO'>ET	EGIPTO</option><option value='SA	EL SALVADOR'>SA	EL SALVADOR</option><option value='EA	EMIRATOS ARABES UNIDOS'>EA	EMIRATOS ARABES UNIDOS</option><option value='ERT	ERITREA'>ERT	ERITREA</option><option value='ESQ	ESLOVAQUIA'>ESQ	ESLOVAQUIA</option><option value='ESL	ESLOVENIA'>ESL	ESLOVENIA</option><option value='USA	ESTADOS UNIDOS DE AMERICA'>USA	ESTADOS UNIDOS DE AMERICA</option><option value='ES	ESTONIA'>ES	ESTONIA</option><option value='EP	ETIOPIA'>EP	ETIOPIA</option><option value='FJI	FIJI'>FJI	FIJI</option><option value='PI	FILIPINAS'>PI	FILIPINAS</option><option value='SF	FINLANDIA'>SF	FINLANDIA</option><option value='F	FRANCIA'>F	FRANCIA</option><option value='ATF	FRANCIA, TERRITORIOS SUDESTE'>ATF	FRANCIA, TERRITORIOS SUDESTE</option><option value='GA	GABON'>GA	GABON</option><option value='WAG	GAMBIA'>WAG	GAMBIA</option><option value='G	GEORGIA'>G	GEORGIA</option><option value='GH	GHANA'>GH	GHANA</option><option value='WG	GRANADA'>WG	GRANADA</option><option value='GR	GRECIA'>GR	GRECIA</option><option value='GCA	GUATEMALA'>GCA	GUATEMALA</option><option value='GU	GUINEA'>GU	GUINEA</option><option value='GUE	GUINEA ECUATORIAL'>GUE	GUINEA ECUATORIAL</option><option value='GUP	GUINEA-BISSAU'>GUP	GUINEA-BISSAU</option><option value='GUY	GUYANA'>GUY	GUYANA</option><option value='RH	HAITI'>RH	HAITI</option><option value='NL	HOLANDA'>NL	HOLANDA</option><option value='HD	HONDURAS'>HD	HONDURAS</option><option value='H	HUNGRIA'>H	HUNGRIA</option><option value='IND	INDIA'>IND	INDIA</option><option value='RI	INDONESIA'>RI	INDONESIA</option><option value='IR	IRAN'>IR	IRAN</option><option value='IRQ	IRAQ'>IRQ	IRAQ</option><option value='IRL	IRLANDA'>IRL	IRLANDA</option><option value='IS	ISLANDIA'>IS	ISLANDIA</option><option value='SL	ISLAS SALOMON'>SL	ISLAS SALOMON</option><option value='IL	ISRAEL'>IL	ISRAEL</option><option value='I	ITALIA'>I	ITALIA</option><option value='JA	JAMAICA'>JA	JAMAICA</option><option value='J	JAPON'>J	JAPON</option><option value='HKJ	JORDANIA'>HKJ	JORDANIA</option><option value='KAZ	KAZAJSTAN'>KAZ	KAZAJSTAN</option><option value='EAK	KENIA'>EAK	KENIA</option><option value='KIR	KIRGUISTAN'>KIR	KIRGUISTAN</option><option value='KI	KIRIBATI'>KI	KIRIBATI</option><option value='KWT	KUWAIT'>KWT	KUWAIT</option><option value='LAO	LAOS'>LAO	LAOS</option><option value='LS	LESOTHO'>LS	LESOTHO</option><option value='LT	LETONIA'>LT	LETONIA</option><option value='RL	LIBANO'>RL	LIBANO</option><option value='LEB	LIBERIA'>LEB	LIBERIA</option><option value='LAR	LIBIA'>LAR	LIBIA</option><option value='FL	LIECHTENSTEIN'>FL	LIECHTENSTEIN</option><option value='LIT	LITUANIA'>LIT	LITUANIA</option><option value='L	LUXEMBURGO'>L	LUXEMBURGO</option><option value='MCD	MACEDONIA'>MCD	MACEDONIA</option><option value='RM	MADAGASCAR'>RM	MADAGASCAR</option><option value='MAL	MALASIA'>MAL	MALASIA</option><option value='MW	MALAWI'>MW	MALAWI</option><option value='MAD	MALDIVAS'>MAD	MALDIVAS</option><option value='RMM	MALI'>RMM	MALI</option><option value='M	MALTA'>M	MALTA</option><option value='MA	MARRUECOS'>MA	MARRUECOS</option><option value='MS	MAURICIO'>MS	MAURICIO</option><option value='RIM	MAURITANIA'>RIM	MAURITANIA</option><option value='MEX	MEXICO'>MEX	MEXICO</option><option value='MOL	MOLDAVIA'>MOL	MOLDAVIA</option><option value='MC	MONACO'>MC	MONACO</option><option value='MG	MONGOLIA'>MG	MONGOLIA</option><option value='MZ	MOZAMBIQUE'>MZ	MOZAMBIQUE</option><option value='BUR	MYANMAR'>BUR	MYANMAR</option><option value='SWA	NAMIBIA'>SWA	NAMIBIA</option><option value='NU	NAURU'>NU	NAURU</option><option value='NP	NEPAL'>NP	NEPAL</option><option value='NIC	NICARAGUA'>NIC	NICARAGUA</option><option value='NIG	NIGER'>NIG	NIGER</option><option value='WAN	NIGERIA'>WAN	NIGERIA</option><option value='N	NORUEGA'>N	NORUEGA</option><option value='NZ	NUEVA ZELANDA'>NZ	NUEVA ZELANDA</option><option value='OM	OMAN'>OM	OMAN</option><option value='PAK	PAKISTAN'>PAK	PAKISTAN</option><option value='PA	PANAMA'>PA	PANAMA</option><option value='PN	PAPUA NUEVA GUINEA'>PN	PAPUA NUEVA GUINEA</option><option value='PY	PARAGUAY'>PY	PARAGUAY</option><option value='PE	PERU'>PE	PERU</option><option value='PL	POLONIA'>PL	POLONIA</option><option value='P	PORTUGAL'>P	PORTUGAL</option><option value='PR	PUERTO RICO'>PR	PUERTO RICO</option><option value='Q	QATAR'>Q	QATAR</option><option value='GB	REINO UNIDO'>GB	REINO UNIDO</option><option value='RCA	REPUBLICA CENTROAFRICANA'>RCA	REPUBLICA CENTROAFRICANA</option><option value='CHE	REPUBLICA CHECA'>CHE	REPUBLICA CHECA</option><option value='COR	REPUBLICA DE COREA'>COR	REPUBLICA DE COREA</option><option value='RDC	REPUBLICA DEMOCRATICA DEL CONGO'>RDC	REPUBLICA DEMOCRATICA DEL CONGO</option><option value='DOM	REPUBLICA DOMINICANA'>DOM	REPUBLICA DOMINICANA</option><option value='ROK	REPUBLICA POPULAR DEMOCRATICA DE COREA'>ROK	REPUBLICA POPULAR DEMOCRATICA DE COREA</option><option value='ZA	REPUBLICA SUDAFRICANA'>ZA	REPUBLICA SUDAFRICANA</option><option value='RWA	RUANDA'>RWA	RUANDA</option><option value='R	RUMANIA'>R	RUMANIA</option><option value='RUS	RUSIA'>RUS	RUSIA</option><option value='SH	SAHARA OCCIDENTAL'>SH	SAHARA OCCIDENTAL</option><option value='ASM	SAMOA NORTEAMERICANA'>ASM	SAMOA NORTEAMERICANA</option><option value='WS	SAMOA OCCIDENTAL'>WS	SAMOA OCCIDENTAL</option><option value='SCN	SAN CRISTOBAL Y NIEVES'>SCN	SAN CRISTOBAL Y NIEVES</option><option value='RSM	SAN MARINO'>RSM	SAN MARINO</option><option value='VS	SAN VICENTE Y LAS GRANADINAS'>VS	SAN VICENTE Y LAS GRANADINAS</option><option value='WL	SANTA LUCIA'>WL	SANTA LUCIA</option><option value='ST	SANTO TOME Y PRINCIPE'>ST	SANTO TOME Y PRINCIPE</option><option value='SN	SENEGAL'>SN	SENEGAL</option><option value='SRB	SERBIA'>SRB	SERBIA</option><option value='SM	SERBIA Y MONTENEGRO'>SM	SERBIA Y MONTENEGRO</option><option value='SY	SEYCHELLES'>SY	SEYCHELLES</option><option value='WAL	SIERRA LEONA'>WAL	SIERRA LEONA</option><option value='APT	SIN PAIS'>APT	SIN PAIS</option><option value='SGP	SINGAPUR'>SGP	SINGAPUR</option><option value='SYR	SIRIA'>SYR	SIRIA</option><option value='SP	SOMALIA'>SP	SOMALIA</option><option value='CL	SRI LANKA'>CL	SRI LANKA</option><option value='SDN	SUDAN'>SDN	SUDAN</option><option value='S	SUECIA'>S	SUECIA</option><option value='CH	SUIZA'>CH	SUIZA</option><option value='SME	SURINAM'>SME	SURINAM</option><option value='SD	SWAZILANDIA'>SD	SWAZILANDIA</option><option value='T	TAILANDIA'>T	TAILANDIA</option><option value='RC	TAIWAN'>RC	TAIWAN</option><option value='EAT	TANZANIA'>EAT	TANZANIA</option><option value='TAD	TAYIKISTAN'>TAD	TAYIKISTAN</option><option value='PSE	Territorios Ocupados de Palestina'>PSE	Territorios Ocupados de Palestina</option><option value='TMP	TIMOR ORIENTAL'>TMP	TIMOR ORIENTAL</option><option value='TG	TOGO'>TG	TOGO</option><option value='TNG	TONGA'>TNG	TONGA</option><option value='TT	TRINIDAD Y TOBAGO'>TT	TRINIDAD Y TOBAGO</option><option value='TN	TUNEZ'>TN	TUNEZ</option><option value='TUR	TURKMENISTAN'>TUR	TURKMENISTAN</option><option value='TR	TURQUIA'>TR	TURQUIA</option><option value='UKR	UCRANIA'>UKR	UCRANIA</option><option value='EAU	UGANDA'>EAU	UGANDA</option><option value='U	URUGUAY'>U	URUGUAY</option><option value='UZB	UZBEKISTAN'>UZB	UZBEKISTAN</option><option value='VNT	VANUATU'>VNT	VANUATU</option><option value='V	VATICANO'>V	VATICANO</option><option value='YV	VENEZUELA'>YV	VENEZUELA</option><option value='VN	VIETNAM'>VN	VIETNAM</option><option value='YEA	YEMEN'>YEA	YEMEN</option><option value='YU	YUGOSLAVIA'>YU	YUGOSLAVIA</option><option value='Z	ZAMBIA'>Z	ZAMBIA</option><option value='RSR	ZIMBABWE'>RSR	ZIMBABWE</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Prov_nacimiento'>* Provincia de Nacimiento</label>:<br/> 
+	 <select id="Prov_nacimiento" name="Prov_nacimiento">
+	<option value='28 Madrid'>28 Madrid</option><option value='00 Provincia en un país extranjero'>00 Provincia en un país extranjero</option><option value='03 Alacant/Alicante'>03 Alacant/Alicante</option><option value='02 Albacete'>02 Albacete</option><option value='04 Almería'>04 Almería</option><option value='01 Araba/Alava'>01 Araba/Alava</option><option value='33 Asturias'>33 Asturias</option><option value='05 Ávila'>05 Ávila</option><option value='06 Badajoz'>06 Badajoz</option><option value='08 Barcelona'>08 Barcelona</option><option value='48 Bizkaia'>48 Bizkaia</option><option value='09 Burgos'>09 Burgos</option><option value='39 Cantabria'>39 Cantabria</option><option value='12 Castellón'>12 Castellón</option><option value='51 Ceuta'>51 Ceuta</option><option value='13 Ciudad Real'>13 Ciudad Real</option><option value='15 Coruña, A'>15 Coruña, A</option><option value='16 Cuenca'>16 Cuenca</option><option value='10 Cáceres'>10 Cáceres</option><option value='11 Cádiz'>11 Cádiz</option><option value='14 Córdoba'>14 Córdoba</option><option value='17 Girona'>17 Girona</option><option value='18 Granada'>18 Granada</option><option value='19 Guadalajara'>19 Guadalajara</option><option value='20 Guipuzkoa'>20 Guipuzkoa</option><option value='21 Huelva'>21 Huelva</option><option value='22 Huesca'>22 Huesca</option><option value='07 Illes Balears'>07 Illes Balears</option><option value='23 Jaén'>23 Jaén</option><option value='24 León'>24 León</option><option value='25 Lleida'>25 Lleida</option><option value='27 Lugo'>27 Lugo</option><option value='52 Melilla'>52 Melilla</option><option value='30 Murcia'>30 Murcia</option><option value='29 Málaga'>29 Málaga</option><option value='31 Navarra'>31 Navarra</option><option value='32 Ourense'>32 Ourense</option><option value='34 Palencia'>34 Palencia</option><option value='35 Palmas, Las'>35 Palmas, Las</option><option value='36 Pontevedra'>36 Pontevedra</option><option value='36 Rioja, La'>36 Rioja, La</option><option value='37 Salamanca'>37 Salamanca</option><option value='38 Santa Cruz Ten.'>38 Santa Cruz Ten.</option><option value='40 Segovia'>40 Segovia</option><option value='41 Sevilla'>41 Sevilla</option><option value='42 Soria'>42 Soria</option><option value='43 Tarragona'>43 Tarragona</option><option value='44 Teruel'>44 Teruel</option><option value='45 Toledo'>45 Toledo</option><option value='46 Valencia'>46 Valencia</option><option value='47 Valladolid'>47 Valladolid</option><option value='49 Zamora'>49 Zamora</option><option value='50 Zaragoza'>50 Zaragoza</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Lugar_nacimiento'>* Ciudad Nacimiento</label>:<br/> 
+		<input type='text' name='Lugar_nacimiento' id='Lugar_nacimiento' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Nacionalidad'> Nacionalidad</label>:<br/> 
+	 <select id="Nacionalidad" name="Nacionalidad">
+	<option value='E España'>E España</option><option value='R Rumania'>R Rumania</option><option value='EC ECUADOR'>EC ECUADOR</option><option value='DOM Rep.Dominicana'>DOM Rep.Dominicana</option><option value='PE Peru'>PE Peru</option><option value='PL Polonia'>PL Polonia</option><option value='CO COLOMBIA'>CO COLOMBIA</option><option value='MA MARRUECOS'>MA MARRUECOS</option><option value='RUS Rusia'>RUS Rusia</option><option value='I Italia'>I Italia</option><option value='BG BULGARIA'>BG BULGARIA</option><option value='PY PARAGUAY'>PY PARAGUAY</option><option value='CV CABO VERDE'>CV CABO VERDE</option><option value='RA Argentina'>RA Argentina</option><option value='BO BOLIVIA'>BO BOLIVIA</option><option value='HD HONDURAS'>HD HONDURAS</option><option value='AF	AFGANISTAN'>AF	AFGANISTAN</option><option value='AL	ALBANIA'>AL	ALBANIA</option><option value='D	ALEMANIA'>D	ALEMANIA</option><option value='AND	ANDORRA'>AND	ANDORRA</option><option value='AO	ANGOLA'>AO	ANGOLA</option><option value='ATA	ANTARTIDA'>ATA	ANTARTIDA</option><option value='AB	ANTIGUA Y BARBUDA'>AB	ANTIGUA Y BARBUDA</option><option value='ASA	ARABIA SAUDITA'>ASA	ARABIA SAUDITA</option><option value='DZ	ARGELIA'>DZ	ARGELIA</option><option value='RA	ARGENTINA'>RA	ARGENTINA</option><option value='AR	ARMENIA'>AR	ARMENIA</option><option value='AUS	AUSTRALIA'>AUS	AUSTRALIA</option><option value='A	AUSTRIA'>A	AUSTRIA</option><option value='AZ	AZERBAIYAN'>AZ	AZERBAIYAN</option><option value='BS	BAHAMAS'>BS	BAHAMAS</option><option value='BRN	BAHREIN'>BRN	BAHREIN</option><option value='BD	BANGLADESH'>BD	BANGLADESH</option><option value='BDS	BARBADOS'>BDS	BARBADOS</option><option value='B	BELGICA'>B	BELGICA</option><option value='BH	BELICE'>BH	BELICE</option><option value='DY	BENIN'>DY	BENIN</option><option value='BHU	BHUTAN'>BHU	BHUTAN</option><option value='BIE	BIELORRUSIA'>BIE	BIELORRUSIA</option><option value='BO	BOLIVIA'>BO	BOLIVIA</option><option value='BOH	BOSNIA HERZEGOVINA'>BOH	BOSNIA HERZEGOVINA</option><option value='RB	BOTSWANA'>RB	BOTSWANA</option><option value='BR	BRASIL'>BR	BRASIL</option><option value='BRU	BRUNEI DARUSSALAM'>BRU	BRUNEI DARUSSALAM</option><option value='BG	BULGARIA'>BG	BULGARIA</option><option value='HV	BURKINA FASSO'>HV	BURKINA FASSO</option><option value='RU	BURUNDI'>RU	BURUNDI</option><option value='CV	CABO VERDE'>CV	CABO VERDE</option><option value='K	CAMBOYA'>K	CAMBOYA</option><option value='CA	CAMERUN'>CA	CAMERUN</option><option value='CDN	CANADA'>CDN	CANADA</option><option value='TD	CHAD'>TD	CHAD</option><option value='RCH	CHILE'>RCH	CHILE</option><option value='RPC	CHINA'>RPC	CHINA</option><option value='CY	CHIPRE'>CY	CHIPRE</option><option value='CO	COLOMBIA'>CO	COLOMBIA</option><option value='CAM	COMORES'>CAM	COMORES</option><option value='RCB	CONGO'>RCB	CONGO</option><option value='CI	COSTA DE MARFIL'>CI	COSTA DE MARFIL</option><option value='CR	COSTA RICA'>CR	COSTA RICA</option><option value='CRO	CROACIA'>CRO	CROACIA</option><option value='C	CUBA'>C	CUBA</option><option value='DK	DINAMARCA'>DK	DINAMARCA</option><option value='DJ	DJIBOUTI'>DJ	DJIBOUTI</option><option value='WD	DOMINICA'>WD	DOMINICA</option><option value='EC	ECUADOR'>EC	ECUADOR</option><option value='ET	EGIPTO'>ET	EGIPTO</option><option value='SA	EL SALVADOR'>SA	EL SALVADOR</option><option value='EA	EMIRATOS ARABES UNIDOS'>EA	EMIRATOS ARABES UNIDOS</option><option value='ERT	ERITREA'>ERT	ERITREA</option><option value='ESQ	ESLOVAQUIA'>ESQ	ESLOVAQUIA</option><option value='ESL	ESLOVENIA'>ESL	ESLOVENIA</option><option value='USA	ESTADOS UNIDOS DE AMERICA'>USA	ESTADOS UNIDOS DE AMERICA</option><option value='ES	ESTONIA'>ES	ESTONIA</option><option value='EP	ETIOPIA'>EP	ETIOPIA</option><option value='FJI	FIJI'>FJI	FIJI</option><option value='PI	FILIPINAS'>PI	FILIPINAS</option><option value='SF	FINLANDIA'>SF	FINLANDIA</option><option value='F	FRANCIA'>F	FRANCIA</option><option value='ATF	FRANCIA, TERRITORIOS SUDESTE'>ATF	FRANCIA, TERRITORIOS SUDESTE</option><option value='GA	GABON'>GA	GABON</option><option value='WAG	GAMBIA'>WAG	GAMBIA</option><option value='G	GEORGIA'>G	GEORGIA</option><option value='GH	GHANA'>GH	GHANA</option><option value='WG	GRANADA'>WG	GRANADA</option><option value='GR	GRECIA'>GR	GRECIA</option><option value='GCA	GUATEMALA'>GCA	GUATEMALA</option><option value='GU	GUINEA'>GU	GUINEA</option><option value='GUE	GUINEA ECUATORIAL'>GUE	GUINEA ECUATORIAL</option><option value='GUP	GUINEA-BISSAU'>GUP	GUINEA-BISSAU</option><option value='GUY	GUYANA'>GUY	GUYANA</option><option value='RH	HAITI'>RH	HAITI</option><option value='NL	HOLANDA'>NL	HOLANDA</option><option value='HD	HONDURAS'>HD	HONDURAS</option><option value='H	HUNGRIA'>H	HUNGRIA</option><option value='IND	INDIA'>IND	INDIA</option><option value='RI	INDONESIA'>RI	INDONESIA</option><option value='IR	IRAN'>IR	IRAN</option><option value='IRQ	IRAQ'>IRQ	IRAQ</option><option value='IRL	IRLANDA'>IRL	IRLANDA</option><option value='IS	ISLANDIA'>IS	ISLANDIA</option><option value='SL	ISLAS SALOMON'>SL	ISLAS SALOMON</option><option value='IL	ISRAEL'>IL	ISRAEL</option><option value='I	ITALIA'>I	ITALIA</option><option value='JA	JAMAICA'>JA	JAMAICA</option><option value='J	JAPON'>J	JAPON</option><option value='HKJ	JORDANIA'>HKJ	JORDANIA</option><option value='KAZ	KAZAJSTAN'>KAZ	KAZAJSTAN</option><option value='EAK	KENIA'>EAK	KENIA</option><option value='KIR	KIRGUISTAN'>KIR	KIRGUISTAN</option><option value='KI	KIRIBATI'>KI	KIRIBATI</option><option value='KWT	KUWAIT'>KWT	KUWAIT</option><option value='LAO	LAOS'>LAO	LAOS</option><option value='LS	LESOTHO'>LS	LESOTHO</option><option value='LT	LETONIA'>LT	LETONIA</option><option value='RL	LIBANO'>RL	LIBANO</option><option value='LEB	LIBERIA'>LEB	LIBERIA</option><option value='LAR	LIBIA'>LAR	LIBIA</option><option value='FL	LIECHTENSTEIN'>FL	LIECHTENSTEIN</option><option value='LIT	LITUANIA'>LIT	LITUANIA</option><option value='L	LUXEMBURGO'>L	LUXEMBURGO</option><option value='MCD	MACEDONIA'>MCD	MACEDONIA</option><option value='RM	MADAGASCAR'>RM	MADAGASCAR</option><option value='MAL	MALASIA'>MAL	MALASIA</option><option value='MW	MALAWI'>MW	MALAWI</option><option value='MAD	MALDIVAS'>MAD	MALDIVAS</option><option value='RMM	MALI'>RMM	MALI</option><option value='M	MALTA'>M	MALTA</option><option value='MA	MARRUECOS'>MA	MARRUECOS</option><option value='MS	MAURICIO'>MS	MAURICIO</option><option value='RIM	MAURITANIA'>RIM	MAURITANIA</option><option value='MEX	MEXICO'>MEX	MEXICO</option><option value='MOL	MOLDAVIA'>MOL	MOLDAVIA</option><option value='MC	MONACO'>MC	MONACO</option><option value='MG	MONGOLIA'>MG	MONGOLIA</option><option value='MZ	MOZAMBIQUE'>MZ	MOZAMBIQUE</option><option value='BUR	MYANMAR'>BUR	MYANMAR</option><option value='SWA	NAMIBIA'>SWA	NAMIBIA</option><option value='NU	NAURU'>NU	NAURU</option><option value='NP	NEPAL'>NP	NEPAL</option><option value='NIC	NICARAGUA'>NIC	NICARAGUA</option><option value='NIG	NIGER'>NIG	NIGER</option><option value='WAN	NIGERIA'>WAN	NIGERIA</option><option value='N	NORUEGA'>N	NORUEGA</option><option value='NZ	NUEVA ZELANDA'>NZ	NUEVA ZELANDA</option><option value='OM	OMAN'>OM	OMAN</option><option value='PAK	PAKISTAN'>PAK	PAKISTAN</option><option value='PA	PANAMA'>PA	PANAMA</option><option value='PN	PAPUA NUEVA GUINEA'>PN	PAPUA NUEVA GUINEA</option><option value='PY	PARAGUAY'>PY	PARAGUAY</option><option value='PE	PERU'>PE	PERU</option><option value='PL	POLONIA'>PL	POLONIA</option><option value='P	PORTUGAL'>P	PORTUGAL</option><option value='PR	PUERTO RICO'>PR	PUERTO RICO</option><option value='Q	QATAR'>Q	QATAR</option><option value='GB	REINO UNIDO'>GB	REINO UNIDO</option><option value='RCA	REPUBLICA CENTROAFRICANA'>RCA	REPUBLICA CENTROAFRICANA</option><option value='CHE	REPUBLICA CHECA'>CHE	REPUBLICA CHECA</option><option value='COR	REPUBLICA DE COREA'>COR	REPUBLICA DE COREA</option><option value='RDC	REPUBLICA DEMOCRATICA DEL CONGO'>RDC	REPUBLICA DEMOCRATICA DEL CONGO</option><option value='DOM	REPUBLICA DOMINICANA'>DOM	REPUBLICA DOMINICANA</option><option value='ROK	REPUBLICA POPULAR DEMOCRATICA DE COREA'>ROK	REPUBLICA POPULAR DEMOCRATICA DE COREA</option><option value='ZA	REPUBLICA SUDAFRICANA'>ZA	REPUBLICA SUDAFRICANA</option><option value='RWA	RUANDA'>RWA	RUANDA</option><option value='R	RUMANIA'>R	RUMANIA</option><option value='RUS	RUSIA'>RUS	RUSIA</option><option value='SH	SAHARA OCCIDENTAL'>SH	SAHARA OCCIDENTAL</option><option value='ASM	SAMOA NORTEAMERICANA'>ASM	SAMOA NORTEAMERICANA</option><option value='WS	SAMOA OCCIDENTAL'>WS	SAMOA OCCIDENTAL</option><option value='SCN	SAN CRISTOBAL Y NIEVES'>SCN	SAN CRISTOBAL Y NIEVES</option><option value='RSM	SAN MARINO'>RSM	SAN MARINO</option><option value='VS	SAN VICENTE Y LAS GRANADINAS'>VS	SAN VICENTE Y LAS GRANADINAS</option><option value='WL	SANTA LUCIA'>WL	SANTA LUCIA</option><option value='ST	SANTO TOME Y PRINCIPE'>ST	SANTO TOME Y PRINCIPE</option><option value='SN	SENEGAL'>SN	SENEGAL</option><option value='SRB	SERBIA'>SRB	SERBIA</option><option value='SM	SERBIA Y MONTENEGRO'>SM	SERBIA Y MONTENEGRO</option><option value='SY	SEYCHELLES'>SY	SEYCHELLES</option><option value='WAL	SIERRA LEONA'>WAL	SIERRA LEONA</option><option value='APT	SIN PAIS'>APT	SIN PAIS</option><option value='SGP	SINGAPUR'>SGP	SINGAPUR</option><option value='SYR	SIRIA'>SYR	SIRIA</option><option value='SP	SOMALIA'>SP	SOMALIA</option><option value='CL	SRI LANKA'>CL	SRI LANKA</option><option value='SDN	SUDAN'>SDN	SUDAN</option><option value='S	SUECIA'>S	SUECIA</option><option value='CH	SUIZA'>CH	SUIZA</option><option value='SME	SURINAM'>SME	SURINAM</option><option value='SD	SWAZILANDIA'>SD	SWAZILANDIA</option><option value='T	TAILANDIA'>T	TAILANDIA</option><option value='RC	TAIWAN'>RC	TAIWAN</option><option value='EAT	TANZANIA'>EAT	TANZANIA</option><option value='TAD	TAYIKISTAN'>TAD	TAYIKISTAN</option><option value='PSE	Territorios Ocupados de Palestina'>PSE	Territorios Ocupados de Palestina</option><option value='TMP	TIMOR ORIENTAL'>TMP	TIMOR ORIENTAL</option><option value='TG	TOGO'>TG	TOGO</option><option value='TNG	TONGA'>TNG	TONGA</option><option value='TT	TRINIDAD Y TOBAGO'>TT	TRINIDAD Y TOBAGO</option><option value='TN	TUNEZ'>TN	TUNEZ</option><option value='TUR	TURKMENISTAN'>TUR	TURKMENISTAN</option><option value='TR	TURQUIA'>TR	TURQUIA</option><option value='UKR	UCRANIA'>UKR	UCRANIA</option><option value='EAU	UGANDA'>EAU	UGANDA</option><option value='U	URUGUAY'>U	URUGUAY</option><option value='UZB	UZBEKISTAN'>UZB	UZBEKISTAN</option><option value='VNT	VANUATU'>VNT	VANUATU</option><option value='V	VATICANO'>V	VATICANO</option><option value='YV	VENEZUELA'>YV	VENEZUELA</option><option value='VN	VIETNAM'>VN	VIETNAM</option><option value='YEA	YEMEN'>YEA	YEMEN</option><option value='YU	YUGOSLAVIA'>YU	YUGOSLAVIA</option><option value='Z	ZAMBIA'>Z	ZAMBIA</option><option value='RSR	ZIMBABWE'>RSR	ZIMBABWE</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_fecha_nacimiento'>* Fecha Nacimiento</label>:<br/> 
+		<input type='date' name='fecha_nacimiento' id='fecha_nacimiento' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Telefono'> Teléfono</label>:<br/> 
+		<input type='text' name='Telefono' id='Telefono' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Telefono_movil'> Teléfono móvil</label>:<br/> 
+		<input type='text' name='Telefono_movil' id='Telefono_movil' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_correo_electronico'>* Correo electrónico</label>:<br/> 
+		<input type='email' name='correo_electronico' id='correo_electronico' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_domicilio_calle'>* Domicilio. Calle</label>:<br/> 
+		<input type='text' name='domicilio_calle' id='domicilio_calle' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_domicilio_numero'>* Domicilio. Número</label>:<br/> 
+		<input type='text' name='domicilio_numero' id='domicilio_numero' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_domicilio_piso'>* Domicilio. Piso y puerta</label>:<br/> 
+		<input type='text' name='domicilio_piso' id='domicilio_piso' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_domicilio_poblacion'>* Domicilio. Población</label>:<br/> 
+		<input type='text' name='domicilio_poblacion' id='domicilio_poblacion' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_domicilio_codigo_postal'>* Domicilio. Código postal</label>:<br/> 
+		<input type='text' name='domicilio_codigo_postal' id='domicilio_codigo_postal' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		</div>
+		<div class='w3-panel w3-border w3-light-grey'>
+			<h2>Datos Adicionales</h2>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_familia_numerosa'>* Familia numerosa</label>:<br/> 
+	 <select id="familia_numerosa" name="familia_numerosa">
+	<option value='No'>No</option><option value='Familia numerosa categoría especial'>Familia numerosa categoría especial</option><option value='Familia numerosa categoría general'>Familia numerosa categoría general</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_familia_numerosa_numero'> Familia numerosa. Número de título de familia numerosa</label>:<br/> 
+		<input type='text' name='familia_numerosa_numero' id='familia_numerosa_numero' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_familia_numerosa_fecha_expedicion'> Familia numerosa. Fecha de expedición</label>:<br/> 
+		<input type='date' name='familia_numerosa_fecha_expedicion' id='familia_numerosa_fecha_expedicion' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_familia_numerosa_fecha_renovacion'> Familia numerosa. Fecha de renovación</label>:<br/> 
+		<input type='date' name='familia_numerosa_fecha_renovacion' id='familia_numerosa_fecha_renovacion' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_repetidor'>* ¿Es alumno repetidor?</label>:<br/> 
+	 <select id="repetidor" name="repetidor">
+	<option value=''></option><option value='Sí'>Sí</option><option value='No'>No</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_repetidor_cursos'> Cursos repetidos</label>:<br/> 
+		<input type='text' name='repetidor_cursos' id='repetidor_cursos' class='w3-input  w3-border' value=''/>
+	 <br/>
+			En caso de ser alumno repetidor, indique el curso que ha repetido
+</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_alumno_nuevo_en_el_centro'>* ¿Alumno nuevo en el centro?</label>:<br/> 
+	 <select id="alumno_nuevo_en_el_centro" name="alumno_nuevo_en_el_centro">
+	<option value=''></option><option value='Sí'>Sí</option><option value='No'>No</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_alumno_nuevo_en_el_centro_procedencia'> Centro de procedencia del alumno</label>:<br/> 
+		<input type='text' name='alumno_nuevo_en_el_centro_procedencia' id='alumno_nuevo_en_el_centro_procedencia' class='w3-input  w3-border' value=''/>
+	 <br/>
+			Rellenar en caso de provenir de otro centro
+</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_alumno_nuevo_en_el_centro_curso'> Curso y grupo de procedencia del alumno</label>:<br/> 
+		<input type='text' name='alumno_nuevo_en_el_centro_curso' id='alumno_nuevo_en_el_centro_curso' class='w3-input  w3-border' value=''/>
+	 <br/>
+			Rellenar en caso de provenir de otro centro
+</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_repite_en_primaria_ok'>* ¿Has repetido algún curso en primaria?</label>:<br/> 
+	 <select id="repite_en_primaria_ok" name="repite_en_primaria_ok">
+	<option value=''></option><option value='Sí'>Sí</option><option value='No'>No</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_repite_en_primaria_curso'> En caso de haber repetido. ¿Qué curso?</label>:<br/> 
+		<input type='text' name='repite_en_primaria_curso' id='repite_en_primaria_curso' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		</div>
+		<div class='w3-panel w3-border w3-light-grey'>
+			<h2>Padre/Madre/Tutor 1</h2>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Tipo'>* Padre/Madre/Tutor 1. Tipo</label>:<br/> 
+	 <select id="PadreMadreTutor1Tipo" name="PadreMadreTutor1Tipo">
+	<option value=''></option><option value='Padre'>Padre</option><option value='Madre'>Madre</option><option value='Tutor'>Tutor</option><option value='Tutora'>Tutora</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Apellido1'>* Padre/Madre/Tutor 1. Primer Apellido</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Apellido1' id='PadreMadreTutor1Apellido1' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Apellido2'> Padre/Madre/Tutor 1. Segundo Apellido</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Apellido2' id='PadreMadreTutor1Apellido2' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Nombre'>* Padre/Madre/Tutor 1. Nombre</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Nombre' id='PadreMadreTutor1Nombre' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1DniTipo'>* Padre/Madre/Tutor 1. Tipo DNI-NIE-Pasaporte</label>:<br/> 
+	 <select id="PadreMadreTutor1DniTipo" name="PadreMadreTutor1DniTipo">
+	<option value=''></option><option value='DNI'>DNI</option><option value='NIE'>NIE</option><option value='Pasaporte'>Pasaporte</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Apellido1Dni'>* Padre/Madre/Tutor 1. DNI-NIE-Pasaporte</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Apellido1Dni' id='PadreMadreTutor1Apellido1Dni' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Fecha'> Padre/Madre/Tutor 1. Fecha de nacimiento</label>:<br/> 
+		<input type='date' name='PadreMadreTutor1Fecha' id='PadreMadreTutor1Fecha' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Telefono'>* Padre/Madre/Tutor 1. Teléfono</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Telefono' id='PadreMadreTutor1Telefono' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Telefono2'> Padre/Madre/Tutor 1. Otro Teléfono</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Telefono2' id='PadreMadreTutor1Telefono2' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Email'> Padre/Madre/Tutor 1. Correo electrónico</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Email' id='PadreMadreTutor1Email' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Direccion'>* Padre/Madre/Tutor 1. Dirección</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Direccion' id='PadreMadreTutor1Direccion' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1Población'>* Padre/Madre/Tutor 1. Población</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1Población' id='PadreMadreTutor1Población' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor1CodigoPostal'>* Padre/Madre/Tutor 1. Código Postal</label>:<br/> 
+		<input type='text' name='PadreMadreTutor1CodigoPostal' id='PadreMadreTutor1CodigoPostal' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		</div>
+		<div class='w3-panel w3-border w3-light-grey'>
+			<h2>Padre/Madre/Tutor 2</h2>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Tipo'> Padre/Madre/Tutor 2. Tipo</label>:<br/> 
+	 <select id="PadreMadreTutor2Tipo" name="PadreMadreTutor2Tipo">
+	<option value=''></option><option value='Padre'>Padre</option><option value='Madre'>Madre</option><option value='Tutor'>Tutor</option><option value='Tutora'>Tutora</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Apellido1'> Padre/Madre/Tutor 2. Primer Apellido</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Apellido1' id='PadreMadreTutor2Apellido1' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Apellido2'> Padre/Madre/Tutor 2. Segundo Apellido</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Apellido2' id='PadreMadreTutor2Apellido2' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Nombre'> Padre/Madre/Tutor 2. Nombre</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Nombre' id='PadreMadreTutor2Nombre' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2DniTipo'> Padre/Madre/Tutor 2. Tipo DNI-NIE-Pasaporte</label>:<br/> 
+	 <select id="PadreMadreTutor2DniTipo" name="PadreMadreTutor2DniTipo">
+	<option value=''></option><option value='DNI'>DNI</option><option value='NIE'>NIE</option><option value='Pasaporte'>Pasaporte</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Apellido1Dni'> Padre/Madre/Tutor 2. DNI-NIE-Pasaporte</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Apellido1Dni' id='PadreMadreTutor2Apellido1Dni' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Fecha'> Padre/Madre/Tutor 2. Fecha de nacimiento</label>:<br/> 
+		<input type='date' name='PadreMadreTutor2Fecha' id='PadreMadreTutor2Fecha' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Telefono'> Padre/Madre/Tutor 2. Teléfono</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Telefono' id='PadreMadreTutor2Telefono' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Telefono2'> Padre/Madre/Tutor 2. Otro Teléfono</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Telefono2' id='PadreMadreTutor2Telefono2' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Email'> Padre/Madre/Tutor 2. Correo electrónico</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Email' id='PadreMadreTutor2Email' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Convive'> Padre/Madre/Tutor 2. ¿Vive en el domicilio familiar?</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Convive' id='PadreMadreTutor2Convive' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Direccion'> Padre/Madre/Tutor 2. Dirección</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Direccion' id='PadreMadreTutor2Direccion' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2Población'> Padre/Madre/Tutor 2. Población</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2Población' id='PadreMadreTutor2Población' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PadreMadreTutor2CodigoPostal'> Padre/Madre/Tutor 2. Código Postal</label>:<br/> 
+		<input type='text' name='PadreMadreTutor2CodigoPostal' id='PadreMadreTutor2CodigoPostal' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		</div>
+		<div class='w3-panel w3-border w3-light-grey'>
+			<h2>Otros datos</h2>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_DniGestiones'>* DNI-NIE-pasaporte del padre/madre/tutor para hacer gestiones en el centro</label>:<br/> 
+		<input type='text' name='DniGestiones' id='DniGestiones' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_TelefonoContacto'>* Teléfono de contacto padre, madre o tutor</label>:<br/> 
+		<input type='text' name='TelefonoContacto' id='TelefonoContacto' class='w3-input  w3-border' value=''/>
+	 <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_AMPA'> Permite que su correo sea facilitado a la Asociación de Madres Padres</label>:<br/> 
+	 <select id="AMPA" name="AMPA">
+	<option value='Sí'>Sí</option><option value='No'>No</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_SalirSeptima'> Permite la autorización de salida a 7ª hora cuando no hay profesor</label>:<br/> 
+	 <select id="SalirSeptima" name="SalirSeptima">
+	<option value='Sí'>Sí</option><option value='No'>No</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Extraescolares'> Permite la autorización de salidas extraescolares</label>:<br/> 
+	 <select id="Extraescolares" name="Extraescolares">
+	<option value='Sí'>Sí</option><option value='No'>No</option></select> <br/>
+			</p>
+		</div>
+	
+		</div>
+		<div class='w3-panel w3-border w3-light-grey'>
+			<h2>Asignaturas</h2>
+	
+		<p>
+			Asignaturas Obligatorias: Física y Química / Geografía e Historia / Educación Física / Educación Plástica y Visual / Lengua Castellana y Literatura / Lengua Extranjera / Matemáticas / Tecnología, Programación y Robótica / Música
+		</p>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Asignaturas_optativas'> Asignaturas optativas</label>:<br/> <table><tr>
+        <td></td> <td><span class='w3-btn w3-green' onclick='reorder_intercambiar_opcion("Asignaturas_optativas_0", "Asignaturas_optativas_1")'>Bajar</span></td>
+        <td>1º: <input type='text' value='Segunda lengua extranjera (Francés)' name='Asignaturas_optativas_0' size='100' readonly ></td>
+         </tr>
+         <tr>
+        <td><span class='w3-btn w3-indigo' onclick='reorder_intercambiar_opcion("Asignaturas_optativas_1", "Asignaturas_optativas_0")'>Subir</span></td> <td><span class='w3-btn w3-green' onclick='reorder_intercambiar_opcion("Asignaturas_optativas_1", "Asignaturas_optativas_2")'>Bajar</span></td>
+        <td>2º: <input type='text' value='Recuperación de lengua' name='Asignaturas_optativas_1' size='100' readonly ></td>
+         </tr>
+         <tr>
+        <td><span class='w3-btn w3-indigo' onclick='reorder_intercambiar_opcion("Asignaturas_optativas_2", "Asignaturas_optativas_1")'>Subir</span></td> <td><span class='w3-btn w3-green' onclick='reorder_intercambiar_opcion("Asignaturas_optativas_2", "Asignaturas_optativas_3")'>Bajar</span></td>
+        <td>3º: <input type='text' value='Recuperación de matemáticas' name='Asignaturas_optativas_2' size='100' readonly ></td>
+         </tr>
+         <tr>
+        <td><span class='w3-btn w3-indigo' onclick='reorder_intercambiar_opcion("Asignaturas_optativas_3", "Asignaturas_optativas_2")'>Subir</span></td> <td></td>
+        <td>4º: <input type='text' value='Deporte' name='Asignaturas_optativas_3' size='100' readonly ></td>
+         </tr>
+         </table> <br/>
+			El alumno sólo cursará una de las asignaturas optativas. Ordene usando los botones de <i>Subir</i> y <i>Bajar</i> por orden de preferencia, siendo la que está más arriba su opción favorita. <b>La elección de la primera opción, no asegura que esta vaya a ser la asignatura cursada.</b>
+</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_Religion_Valores'> Seleccione entre Religión / Valores éticos</label>:<br/> 
+	 <select id="Religion_Valores" name="Religion_Valores">
+	<option value='Valores éticos'>Valores éticos</option><option value='Religión'>Religión</option></select> <br/>
+			</p>
+		</div>
+	
+		<div class='w3-panel w3-border w3-white'>
+			<p><label id='_etiqueta_PoliticaPrivacidad'>* He leído y acepto la POLÍTICA DE PRIVACIDAD EN C.D. DE LA C. DE MADRID</label>:<br/> 
+	 <select id="PoliticaPrivacidad" name="PoliticaPrivacidad">
+	<option value=''></option><option value='Sí'>Sí</option></select> <br/>
+			<a target="_blank" href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+</p>
+		</div>
+	<script>var checkEntryList = ["Foto","Apellido1","Nombre","Sexo","DniTipo","Dni","Pais","Prov_nacimiento","Lugar_nacimiento","fecha_nacimiento","correo_electronico","domicilio_calle","domicilio_numero","domicilio_piso","domicilio_poblacion","domicilio_codigo_postal","familia_numerosa","repetidor","alumno_nuevo_en_el_centro","repite_en_primaria_ok","PadreMadreTutor1Tipo","PadreMadreTutor1Apellido1","PadreMadreTutor1Nombre","PadreMadreTutor1DniTipo","PadreMadreTutor1Apellido1Dni","PadreMadreTutor1Telefono","PadreMadreTutor1Direccion","PadreMadreTutor1Población","PadreMadreTutor1CodigoPostal","DniGestiones","TelefonoContacto","PoliticaPrivacidad"];</script>
+<script>var items = [
+	    		    { id:'Seccion1', etiqueta_web: 'Matrícula 2º ESO', etiqueta_pdf: null, observaciones: '', tipo: 'Seccion'
+	    		    },
+	    		    { id:'Label1', etiqueta_web: '<p>Junto a la solicitud de matrícula, que tiene a continuación, hay que que adjuntar FOTOCOPIAS y original para cotejo de la siguiente documentación:</p>\n<ul> \n<li>DNI/NIE del alumno. En el caso de tener DNI o NIE.</li>\n<li>DNI/NIE del padre, madre o tutor</li>\n<li>Boletín de notas del curso anterior</li>\n</ul>\n<p>En el caso de ser alumno nuevo en el centro deberá añadir:</p>\n<ul>\n<li>Certificación académica oficial de los estudios realizados hasta ahora</li>\n<li>El libro de familia</li>\n</ul>\n<p><strong>La elección de los itinerarios y asignaturas optativas es un acto de responsabilidad para el futuro académico del alumno. En la página web del centro se ofrece la información necesaria para tomar dichas decisiones:<a href="https://site.educa.madrid.org/ies.villablanca.madrid/index.php/177-2/" target="_blank"> Haz clic aquí.</a></strong></p>\n<p><strong>Tratamiento de los datos personales:</strong></p>\n<p>En el siguiente enlace hay información sobre protección de los datos de carácter personal recogidos en esta instancia:</p>\n<a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>', etiqueta_pdf: "", observaciones: '', tipo: 'Etiqueta'
+	    		    },
+	    		    { id:'SeccionDatosPersonales', etiqueta_web: 'Datos personales', etiqueta_pdf: null, observaciones: '', tipo: 'Seccion'
+	    		    },
+	    		    { id:'EtiquetaDatosAlumno', etiqueta_web: 'Datos personales del alumno', etiqueta_pdf: null, observaciones: '', tipo: 'Etiqueta'
+	    		    },
+	    		    { id:'Foto', etiqueta_web: 'Foto del alumno', etiqueta_pdf: null, observaciones: 'La foto debe ser con el fondo blanco, tomada en formato vertical. Sólo se debe ver la cara del alumno.', tipo: 'Foto'
+	    		    },
+	    		    { id:'Apellido1', etiqueta_web: 'Primer Apellido', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Apellido2', etiqueta_web: 'Segundo Apellido', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Nombre', etiqueta_web: 'Nombre', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Sexo', etiqueta_web: 'Sexo', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'DniTipo', etiqueta_web: 'DNI/NIE/Pasap.', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Dni', etiqueta_web: 'Número de DNI/NIE/Pasap.', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Pais', etiqueta_web: 'País de Nacimiento', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Prov_nacimiento', etiqueta_web: 'Provincia de Nacimiento', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Lugar_nacimiento', etiqueta_web: 'Ciudad Nacimiento', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Nacionalidad', etiqueta_web: 'Nacionalidad', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'fecha_nacimiento', etiqueta_web: 'Fecha Nacimiento', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Telefono', etiqueta_web: 'Teléfono', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Telefono_movil', etiqueta_web: 'Teléfono móvil', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'correo_electronico', etiqueta_web: 'Correo electrónico', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'domicilio_calle', etiqueta_web: 'Domicilio. Calle', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'domicilio_numero', etiqueta_web: 'Domicilio. Número', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'domicilio_piso', etiqueta_web: 'Domicilio. Piso y puerta', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'domicilio_poblacion', etiqueta_web: 'Domicilio. Población', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'domicilio_codigo_postal', etiqueta_web: 'Domicilio. Código postal', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'datos_adicionales', etiqueta_web: 'Datos Adicionales', etiqueta_pdf: null, observaciones: '', tipo: 'Seccion'
+	    		    },
+	    		    { id:'familia_numerosa', etiqueta_web: 'Familia numerosa', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'familia_numerosa_numero', etiqueta_web: 'Familia numerosa. Número de título de familia numerosa', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'familia_numerosa_fecha_expedicion', etiqueta_web: 'Familia numerosa. Fecha de expedición', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'familia_numerosa_fecha_renovacion', etiqueta_web: 'Familia numerosa. Fecha de renovación', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'repetidor', etiqueta_web: '¿Es alumno repetidor?', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'repetidor_cursos', etiqueta_web: 'Cursos repetidos', etiqueta_pdf: null, observaciones: 'En caso de ser alumno repetidor, indique el curso que ha repetido', tipo: 'Entrada'
+	    		    },
+	    		    { id:'alumno_nuevo_en_el_centro', etiqueta_web: '¿Alumno nuevo en el centro?', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'alumno_nuevo_en_el_centro_procedencia', etiqueta_web: 'Centro de procedencia del alumno', etiqueta_pdf: null, observaciones: 'Rellenar en caso de provenir de otro centro', tipo: 'Entrada'
+	    		    },
+	    		    { id:'alumno_nuevo_en_el_centro_curso', etiqueta_web: 'Curso y grupo de procedencia del alumno', etiqueta_pdf: null, observaciones: 'Rellenar en caso de provenir de otro centro', tipo: 'Entrada'
+	    		    },
+	    		    { id:'repite_en_primaria_ok', etiqueta_web: '¿Has repetido algún curso en primaria?', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'repite_en_primaria_curso', etiqueta_web: 'En caso de haber repetido. ¿Qué curso?', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1', etiqueta_web: 'Padre/Madre/Tutor 1', etiqueta_pdf: null, observaciones: '', tipo: 'Seccion'
+	    		    },
+	    		    { id:'PadreMadreTutor1Tipo', etiqueta_web: 'Padre/Madre/Tutor 1. Tipo', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Apellido1', etiqueta_web: 'Padre/Madre/Tutor 1. Primer Apellido', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Apellido2', etiqueta_web: 'Padre/Madre/Tutor 1. Segundo Apellido', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Nombre', etiqueta_web: 'Padre/Madre/Tutor 1. Nombre', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1DniTipo', etiqueta_web: 'Padre/Madre/Tutor 1. Tipo DNI-NIE-Pasaporte', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Apellido1Dni', etiqueta_web: 'Padre/Madre/Tutor 1. DNI-NIE-Pasaporte', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Fecha', etiqueta_web: 'Padre/Madre/Tutor 1. Fecha de nacimiento', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Telefono', etiqueta_web: 'Padre/Madre/Tutor 1. Teléfono', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Telefono2', etiqueta_web: 'Padre/Madre/Tutor 1. Otro Teléfono', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Email', etiqueta_web: 'Padre/Madre/Tutor 1. Correo electrónico', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Direccion', etiqueta_web: 'Padre/Madre/Tutor 1. Dirección', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1Población', etiqueta_web: 'Padre/Madre/Tutor 1. Población', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor1CodigoPostal', etiqueta_web: 'Padre/Madre/Tutor 1. Código Postal', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2', etiqueta_web: 'Padre/Madre/Tutor 2', etiqueta_pdf: null, observaciones: '', tipo: 'Seccion'
+	    		    },
+	    		    { id:'PadreMadreTutor2Tipo', etiqueta_web: 'Padre/Madre/Tutor 2. Tipo', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Apellido1', etiqueta_web: 'Padre/Madre/Tutor 2. Primer Apellido', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Apellido2', etiqueta_web: 'Padre/Madre/Tutor 2. Segundo Apellido', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Nombre', etiqueta_web: 'Padre/Madre/Tutor 2. Nombre', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2DniTipo', etiqueta_web: 'Padre/Madre/Tutor 2. Tipo DNI-NIE-Pasaporte', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Apellido1Dni', etiqueta_web: 'Padre/Madre/Tutor 2. DNI-NIE-Pasaporte', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Fecha', etiqueta_web: 'Padre/Madre/Tutor 2. Fecha de nacimiento', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Telefono', etiqueta_web: 'Padre/Madre/Tutor 2. Teléfono', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Telefono2', etiqueta_web: 'Padre/Madre/Tutor 2. Otro Teléfono', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Email', etiqueta_web: 'Padre/Madre/Tutor 2. Correo electrónico', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Convive', etiqueta_web: 'Padre/Madre/Tutor 2. ¿Vive en el domicilio familiar?', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Direccion', etiqueta_web: 'Padre/Madre/Tutor 2. Dirección', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2Población', etiqueta_web: 'Padre/Madre/Tutor 2. Población', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PadreMadreTutor2CodigoPostal', etiqueta_web: 'Padre/Madre/Tutor 2. Código Postal', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Otros datos', etiqueta_web: 'Otros datos', etiqueta_pdf: null, observaciones: '', tipo: 'Seccion'
+	    		    },
+	    		    { id:'DniGestiones', etiqueta_web: 'DNI-NIE-pasaporte del padre/madre/tutor para hacer gestiones en el centro', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'TelefonoContacto', etiqueta_web: 'Teléfono de contacto padre, madre o tutor', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'AMPA', etiqueta_web: 'Permite que su correo sea facilitado a la Asociación de Madres Padres', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'SalirSeptima', etiqueta_web: 'Permite la autorización de salida a 7ª hora cuando no hay profesor', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Extraescolares', etiqueta_web: 'Permite la autorización de salidas extraescolares', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'Seccion_Asignaturas', etiqueta_web: 'Asignaturas', etiqueta_pdf: null, observaciones: '', tipo: 'Seccion'
+	    		    },
+	    		    { id:'Asignaturas_obligatorias', etiqueta_web: 'Asignaturas Obligatorias: Física y Química / Geografía e Historia / Educación Física / Educación Plástica y Visual / Lengua Castellana y Literatura / Lengua Extranjera / Matemáticas / Tecnología, Programación y Robótica / Música', etiqueta_pdf: null, observaciones: '', tipo: 'Etiqueta'
+	    		    },
+	    		        { id:'Asignaturas_optativas_0', etiqueta_web: 'Asignaturas optativas 1º', etiqueta_pdf: "Asignaturas optativas\n   1º", observaciones: 'El alumno sólo cursará una de las asignaturas optativas. Ordene usando los botones de <i>Subir</i> y <i>Bajar</i> por orden de preferencia, siendo la que está más arriba su opción favorita. <b>La elección de la primera opción, no asegura que esta vaya a ser la asignatura cursada.</b>', tipo: 'Entrada'
+	    		        },
+	    		        { id:'Asignaturas_optativas_1', etiqueta_web: 'Asignaturas optativas 2º', etiqueta_pdf: "   2º", observaciones: 'El alumno sólo cursará una de las asignaturas optativas. Ordene usando los botones de <i>Subir</i> y <i>Bajar</i> por orden de preferencia, siendo la que está más arriba su opción favorita. <b>La elección de la primera opción, no asegura que esta vaya a ser la asignatura cursada.</b>', tipo: 'Entrada'
+	    		        },
+	    		        { id:'Asignaturas_optativas_2', etiqueta_web: 'Asignaturas optativas 3º', etiqueta_pdf: "   3º", observaciones: 'El alumno sólo cursará una de las asignaturas optativas. Ordene usando los botones de <i>Subir</i> y <i>Bajar</i> por orden de preferencia, siendo la que está más arriba su opción favorita. <b>La elección de la primera opción, no asegura que esta vaya a ser la asignatura cursada.</b>', tipo: 'Entrada'
+	    		        },
+	    		        { id:'Asignaturas_optativas_3', etiqueta_web: 'Asignaturas optativas 4º', etiqueta_pdf: "   4º", observaciones: 'El alumno sólo cursará una de las asignaturas optativas. Ordene usando los botones de <i>Subir</i> y <i>Bajar</i> por orden de preferencia, siendo la que está más arriba su opción favorita. <b>La elección de la primera opción, no asegura que esta vaya a ser la asignatura cursada.</b>', tipo: 'Entrada'
+	    		        },
+	    		    { id:'Religion_Valores', etiqueta_web: 'Seleccione entre Religión / Valores éticos', etiqueta_pdf: null, observaciones: '', tipo: 'Entrada'
+	    		    },
+	    		    { id:'PoliticaPrivacidad', etiqueta_web: 'He leído y acepto la POLÍTICA DE PRIVACIDAD EN C.D. DE LA C. DE MADRID', etiqueta_pdf: null, observaciones: '<a target="_blank" href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>', tipo: 'Entrada'
+	    		    }];</script>
+<script>var formulario = {titulo: 'Matrícula 2º ESO', cabecera: 'IES Villablanca. Matrícula 2º ESO.\n{curso_academico}', lateral: '2º ESO:\n{Apellido1} {Apellido2}, {Nombre}', pie: 'Al firmar el alumno queda informado que este centro está cofinanciado por el Fondo Social Europeo.\nAutorizo a ceder mis datos personales al fichero educamadrid con el fin de generar el usuario y clave que permitirán el acceso a los servicios educativos de la Plataforma Tecnológica EducaMadrid.\nSe autoriza al IES Villablanca al envío de información sobre el alumno por medios electrónicos. También se autoriza al IES Villablanca a publicar trabajos o imágenes del alumno. Autorizo a mi hijo/a a salir en algunas clases de Educación Física y Deporte al parque y polideportivo anexo al centro y situados en el Paseo del Polideportivo S/N.\nPara denegar alguna de las autorizaciones anteriores, los padres, tutores o alumnos mayores de edad podrán entregar un escrito en la secretaría del Centro. Los datos que se recogen, se tratarán informáticamente o se archivarán con el consentimiento del ciudadano, quien tiene derecho a decidir quién puede tener sus datos, para qué los usa, solicitar que los mismos sean exactos y que se utilicen para el fin que se recogen, con las excepciones contempladas en la legislación vigente.\nPara cualquier cuestión relacionada con esta materia puede dirigirse al teléfono de información 012. Es obligatoria la firma de ambos progenitores si el alumno es menor de edad.\nEn ________________________________, a ___________ de ___________________ de 20______\nFirma Padre/Tutor:                     Firma Madre/Tutora:                   Firma del/de la alumno/a:'};</script>
+<script>_datos.generarPDF = function (campos) {
+			this.datosIES = "IES VILLABLANCA\nC/Villablanca, 79 - 28032 Madrid\nTeléfono 91 775 22 14 Fax 91 778 85 77\nCorreo ies.villablanca.madrid@educa.madrid.org\nC.C. 28039891";
+this.cabeceraEstandar = false;
+this.generarPDFEstandar(campos);
+
+		};</script><script>_datos.mensaje_formulario_aceptado = `Se va a generar un fichero PDF que se descargará en su equipo. Imprima dos copias y llévelas a la Secretaría del Centro con el resto de documentación solicitada o guarde el fichero para introducirlo en la Secretaría Virtual.
+IMPORTANTE: Repase bien la selección que ha realizado de las asignaturas optativas.
+`;</script>
+</div>
+<div class='boton'>
+<span class="w3-btn w3-blue" onclick='generar()'>Generar documentación</span> 
+</div>
+</form>
+<script>
+// Se resetean los campos file
+{
+	for(var i=0; i < checkEntryList.length; i++) {
+		var id = checkEntryList[i];
+		var e = document.forms["formulario"][id];
+		var etiqueta = document.getElementById("_etiqueta_" +id);
+		if(e.type === 'file') {
+			e.campoVacio = true;
+		}
+	}
+}
+</script>
+</body>
+</html>

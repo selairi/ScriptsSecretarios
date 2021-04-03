@@ -1,0 +1,832 @@
+Id: SeccionDatosPersonales
+Tipo: Seccion
+EtiquetaWeb: Datos personales
+
+Id: EtiquetaDatosAlumno
+Tipo: Etiqueta
+EtiquetaWeb: Datos personales del alumno
+
+Id: Foto
+EtiquetaWeb: Foto del alumno
+Tipo: Foto
+Obligatorio: Sí
+Observaciones: La foto debe ser con el fondo blanco, tomada en formato vertical. Sólo se debe ver la cara del alumno.
+
+
+Id: Apellido1
+EtiquetaWeb: Primer Apellido
+Obligatorio: Sí
+
+Id: Apellido2
+EtiquetaWeb: Segundo Apellido
+
+Id: Nombre
+EtiquetaWeb: Nombre
+Obligatorio: Sí
+
+Id: Sexo
+EtiquetaWeb: Sexo
+Tipo: Desplegable
+Obligatorio: Sí
+Valor:
+	Hombre
+	Mujer
+
+
+Id: DniTipo
+EtiquetaWeb: DNI/NIE/Pasap.
+Tipo: Desplegable
+Obligatorio: Sí
+Valor:
+	DNI
+	NIE
+	Pasaporte
+
+
+Id: Dni
+EtiquetaWeb: Número de DNI/NIE/Pasap.
+Obligatorio: Sí
+
+Id: Pais
+EtiquetaWeb: País de Nacimiento
+Tipo: Desplegable
+Obligatorio: Sí
+Valor: E España
+ R Rumania
+ EC ECUADOR
+ DOM Rep.Dominicana
+ PE Peru
+ PL Polonia
+ CO COLOMBIA
+ MA MARRUECOS
+ RUS Rusia
+ I Italia
+ BG BULGARIA
+ PY PARAGUAY
+ CV CABO VERDE
+ RA Argentina
+ BO BOLIVIA
+ HD HONDURAS
+ AF	AFGANISTAN
+ AL	ALBANIA
+ D	ALEMANIA
+ AND	ANDORRA
+ AO	ANGOLA
+ ATA	ANTARTIDA
+ AB	ANTIGUA Y BARBUDA
+ ASA	ARABIA SAUDITA
+ DZ	ARGELIA
+ RA	ARGENTINA
+ AR	ARMENIA
+ AUS	AUSTRALIA
+ A	AUSTRIA
+ AZ	AZERBAIYAN
+ BS	BAHAMAS
+ BRN	BAHREIN
+ BD	BANGLADESH
+ BDS	BARBADOS
+ B	BELGICA
+ BH	BELICE
+ DY	BENIN
+ BHU	BHUTAN
+ BIE	BIELORRUSIA
+ BO	BOLIVIA
+ BOH	BOSNIA HERZEGOVINA
+ RB	BOTSWANA
+ BR	BRASIL
+ BRU	BRUNEI DARUSSALAM
+ BG	BULGARIA
+ HV	BURKINA FASSO
+ RU	BURUNDI
+ CV	CABO VERDE
+ K	CAMBOYA
+ CA	CAMERUN
+ CDN	CANADA
+ TD	CHAD
+ RCH	CHILE
+ RPC	CHINA
+ CY	CHIPRE
+ CO	COLOMBIA
+ CAM	COMORES
+ RCB	CONGO
+ CI	COSTA DE MARFIL
+ CR	COSTA RICA
+ CRO	CROACIA
+ C	CUBA
+ DK	DINAMARCA
+ DJ	DJIBOUTI
+ WD	DOMINICA
+ EC	ECUADOR
+ ET	EGIPTO
+ SA	EL SALVADOR
+ EA	EMIRATOS ARABES UNIDOS
+ ERT	ERITREA
+ ESQ	ESLOVAQUIA
+ ESL	ESLOVENIA
+ USA	ESTADOS UNIDOS DE AMERICA
+ ES	ESTONIA
+ EP	ETIOPIA
+ FJI	FIJI
+ PI	FILIPINAS
+ SF	FINLANDIA
+ F	FRANCIA
+ ATF	FRANCIA, TERRITORIOS SUDESTE
+ GA	GABON
+ WAG	GAMBIA
+ G	GEORGIA
+ GH	GHANA
+ WG	GRANADA
+ GR	GRECIA
+ GCA	GUATEMALA
+ GU	GUINEA
+ GUE	GUINEA ECUATORIAL
+ GUP	GUINEA-BISSAU
+ GUY	GUYANA
+ RH	HAITI
+ NL	HOLANDA
+ HD	HONDURAS
+ H	HUNGRIA
+ IND	INDIA
+ RI	INDONESIA
+ IR	IRAN
+ IRQ	IRAQ
+ IRL	IRLANDA
+ IS	ISLANDIA
+ SL	ISLAS SALOMON
+ IL	ISRAEL
+ I	ITALIA
+ JA	JAMAICA
+ J	JAPON
+ HKJ	JORDANIA
+ KAZ	KAZAJSTAN
+ EAK	KENIA
+ KIR	KIRGUISTAN
+ KI	KIRIBATI
+ KWT	KUWAIT
+ LAO	LAOS
+ LS	LESOTHO
+ LT	LETONIA
+ RL	LIBANO
+ LEB	LIBERIA
+ LAR	LIBIA
+ FL	LIECHTENSTEIN
+ LIT	LITUANIA
+ L	LUXEMBURGO
+ MCD	MACEDONIA
+ RM	MADAGASCAR
+ MAL	MALASIA
+ MW	MALAWI
+ MAD	MALDIVAS
+ RMM	MALI
+ M	MALTA
+ MA	MARRUECOS
+ MS	MAURICIO
+ RIM	MAURITANIA
+ MEX	MEXICO
+ MOL	MOLDAVIA
+ MC	MONACO
+ MG	MONGOLIA
+ MZ	MOZAMBIQUE
+ BUR	MYANMAR
+ SWA	NAMIBIA
+ NU	NAURU
+ NP	NEPAL
+ NIC	NICARAGUA
+ NIG	NIGER
+ WAN	NIGERIA
+ N	NORUEGA
+ NZ	NUEVA ZELANDA
+ OM	OMAN
+ PAK	PAKISTAN
+ PA	PANAMA
+ PN	PAPUA NUEVA GUINEA
+ PY	PARAGUAY
+ PE	PERU
+ PL	POLONIA
+ P	PORTUGAL
+ PR	PUERTO RICO
+ Q	QATAR
+ GB	REINO UNIDO
+ RCA	REPUBLICA CENTROAFRICANA
+ CHE	REPUBLICA CHECA
+ COR	REPUBLICA DE COREA
+ RDC	REPUBLICA DEMOCRATICA DEL CONGO
+ DOM	REPUBLICA DOMINICANA
+ ROK	REPUBLICA POPULAR DEMOCRATICA DE COREA
+ ZA	REPUBLICA SUDAFRICANA
+ RWA	RUANDA
+ R	RUMANIA
+ RUS	RUSIA
+ SH	SAHARA OCCIDENTAL
+ ASM	SAMOA NORTEAMERICANA
+ WS	SAMOA OCCIDENTAL
+ SCN	SAN CRISTOBAL Y NIEVES
+ RSM	SAN MARINO
+ VS	SAN VICENTE Y LAS GRANADINAS
+ WL	SANTA LUCIA
+ ST	SANTO TOME Y PRINCIPE
+ SN	SENEGAL
+ SRB	SERBIA
+ SM	SERBIA Y MONTENEGRO
+ SY	SEYCHELLES
+ WAL	SIERRA LEONA
+ APT	SIN PAIS
+ SGP	SINGAPUR
+ SYR	SIRIA
+ SP	SOMALIA
+ CL	SRI LANKA
+ SDN	SUDAN
+ S	SUECIA
+ CH	SUIZA
+ SME	SURINAM
+ SD	SWAZILANDIA
+ T	TAILANDIA
+ RC	TAIWAN
+ EAT	TANZANIA
+ TAD	TAYIKISTAN
+ PSE	Territorios Ocupados de Palestina
+ TMP	TIMOR ORIENTAL
+ TG	TOGO
+ TNG	TONGA
+ TT	TRINIDAD Y TOBAGO
+ TN	TUNEZ
+ TUR	TURKMENISTAN
+ TR	TURQUIA
+ UKR	UCRANIA
+ EAU	UGANDA
+ U	URUGUAY
+ UZB	UZBEKISTAN
+ VNT	VANUATU
+ V	VATICANO
+ YV	VENEZUELA
+ VN	VIETNAM
+ YEA	YEMEN
+ YU	YUGOSLAVIA
+ Z	ZAMBIA
+ RSR	ZIMBABWE
+
+
+Id: Prov_nacimiento
+EtiquetaWeb: Provincia de Nacimiento
+Tipo: Desplegable
+Obligatorio: Sí
+Valor: 28 Madrid
+ 00 Provincia en un país extranjero
+ 03 Alacant/Alicante
+ 02 Albacete
+ 04 Almería
+ 01 Araba/Alava
+ 33 Asturias
+ 05 Ávila
+ 06 Badajoz
+ 08 Barcelona
+ 48 Bizkaia
+ 09 Burgos
+ 39 Cantabria
+ 12 Castellón
+ 51 Ceuta
+ 13 Ciudad Real
+ 15 Coruña, A
+ 16 Cuenca
+ 10 Cáceres
+ 11 Cádiz
+ 14 Córdoba
+ 17 Girona
+ 18 Granada
+ 19 Guadalajara
+ 20 Guipuzkoa
+ 21 Huelva
+ 22 Huesca
+ 07 Illes Balears
+ 23 Jaén
+ 24 León
+ 25 Lleida
+ 27 Lugo
+ 52 Melilla
+ 30 Murcia
+ 29 Málaga
+ 31 Navarra
+ 32 Ourense
+ 34 Palencia
+ 35 Palmas, Las
+ 36 Pontevedra
+ 36 Rioja, La
+ 37 Salamanca
+ 38 Santa Cruz Ten.
+ 40 Segovia
+ 41 Sevilla
+ 42 Soria
+ 43 Tarragona
+ 44 Teruel
+ 45 Toledo
+ 46 Valencia
+ 47 Valladolid
+ 49 Zamora
+ 50 Zaragoza
+
+
+Id: Lugar_nacimiento
+EtiquetaWeb: Ciudad Nacimiento
+Obligatorio: Sí
+
+
+Id: Nacionalidad
+EtiquetaWeb: Nacionalidad
+Tipo: Desplegable
+Valor: E España
+ R Rumania
+ EC ECUADOR
+ DOM Rep.Dominicana
+ PE Peru
+ PL Polonia
+ CO COLOMBIA
+ MA MARRUECOS
+ RUS Rusia
+ I Italia
+ BG BULGARIA
+ PY PARAGUAY
+ CV CABO VERDE
+ RA Argentina
+ BO BOLIVIA
+ HD HONDURAS
+ AF	AFGANISTAN
+ AL	ALBANIA
+ D	ALEMANIA
+ AND	ANDORRA
+ AO	ANGOLA
+ ATA	ANTARTIDA
+ AB	ANTIGUA Y BARBUDA
+ ASA	ARABIA SAUDITA
+ DZ	ARGELIA
+ RA	ARGENTINA
+ AR	ARMENIA
+ AUS	AUSTRALIA
+ A	AUSTRIA
+ AZ	AZERBAIYAN
+ BS	BAHAMAS
+ BRN	BAHREIN
+ BD	BANGLADESH
+ BDS	BARBADOS
+ B	BELGICA
+ BH	BELICE
+ DY	BENIN
+ BHU	BHUTAN
+ BIE	BIELORRUSIA
+ BO	BOLIVIA
+ BOH	BOSNIA HERZEGOVINA
+ RB	BOTSWANA
+ BR	BRASIL
+ BRU	BRUNEI DARUSSALAM
+ BG	BULGARIA
+ HV	BURKINA FASSO
+ RU	BURUNDI
+ CV	CABO VERDE
+ K	CAMBOYA
+ CA	CAMERUN
+ CDN	CANADA
+ TD	CHAD
+ RCH	CHILE
+ RPC	CHINA
+ CY	CHIPRE
+ CO	COLOMBIA
+ CAM	COMORES
+ RCB	CONGO
+ CI	COSTA DE MARFIL
+ CR	COSTA RICA
+ CRO	CROACIA
+ C	CUBA
+ DK	DINAMARCA
+ DJ	DJIBOUTI
+ WD	DOMINICA
+ EC	ECUADOR
+ ET	EGIPTO
+ SA	EL SALVADOR
+ EA	EMIRATOS ARABES UNIDOS
+ ERT	ERITREA
+ ESQ	ESLOVAQUIA
+ ESL	ESLOVENIA
+ USA	ESTADOS UNIDOS DE AMERICA
+ ES	ESTONIA
+ EP	ETIOPIA
+ FJI	FIJI
+ PI	FILIPINAS
+ SF	FINLANDIA
+ F	FRANCIA
+ ATF	FRANCIA, TERRITORIOS SUDESTE
+ GA	GABON
+ WAG	GAMBIA
+ G	GEORGIA
+ GH	GHANA
+ WG	GRANADA
+ GR	GRECIA
+ GCA	GUATEMALA
+ GU	GUINEA
+ GUE	GUINEA ECUATORIAL
+ GUP	GUINEA-BISSAU
+ GUY	GUYANA
+ RH	HAITI
+ NL	HOLANDA
+ HD	HONDURAS
+ H	HUNGRIA
+ IND	INDIA
+ RI	INDONESIA
+ IR	IRAN
+ IRQ	IRAQ
+ IRL	IRLANDA
+ IS	ISLANDIA
+ SL	ISLAS SALOMON
+ IL	ISRAEL
+ I	ITALIA
+ JA	JAMAICA
+ J	JAPON
+ HKJ	JORDANIA
+ KAZ	KAZAJSTAN
+ EAK	KENIA
+ KIR	KIRGUISTAN
+ KI	KIRIBATI
+ KWT	KUWAIT
+ LAO	LAOS
+ LS	LESOTHO
+ LT	LETONIA
+ RL	LIBANO
+ LEB	LIBERIA
+ LAR	LIBIA
+ FL	LIECHTENSTEIN
+ LIT	LITUANIA
+ L	LUXEMBURGO
+ MCD	MACEDONIA
+ RM	MADAGASCAR
+ MAL	MALASIA
+ MW	MALAWI
+ MAD	MALDIVAS
+ RMM	MALI
+ M	MALTA
+ MA	MARRUECOS
+ MS	MAURICIO
+ RIM	MAURITANIA
+ MEX	MEXICO
+ MOL	MOLDAVIA
+ MC	MONACO
+ MG	MONGOLIA
+ MZ	MOZAMBIQUE
+ BUR	MYANMAR
+ SWA	NAMIBIA
+ NU	NAURU
+ NP	NEPAL
+ NIC	NICARAGUA
+ NIG	NIGER
+ WAN	NIGERIA
+ N	NORUEGA
+ NZ	NUEVA ZELANDA
+ OM	OMAN
+ PAK	PAKISTAN
+ PA	PANAMA
+ PN	PAPUA NUEVA GUINEA
+ PY	PARAGUAY
+ PE	PERU
+ PL	POLONIA
+ P	PORTUGAL
+ PR	PUERTO RICO
+ Q	QATAR
+ GB	REINO UNIDO
+ RCA	REPUBLICA CENTROAFRICANA
+ CHE	REPUBLICA CHECA
+ COR	REPUBLICA DE COREA
+ RDC	REPUBLICA DEMOCRATICA DEL CONGO
+ DOM	REPUBLICA DOMINICANA
+ ROK	REPUBLICA POPULAR DEMOCRATICA DE COREA
+ ZA	REPUBLICA SUDAFRICANA
+ RWA	RUANDA
+ R	RUMANIA
+ RUS	RUSIA
+ SH	SAHARA OCCIDENTAL
+ ASM	SAMOA NORTEAMERICANA
+ WS	SAMOA OCCIDENTAL
+ SCN	SAN CRISTOBAL Y NIEVES
+ RSM	SAN MARINO
+ VS	SAN VICENTE Y LAS GRANADINAS
+ WL	SANTA LUCIA
+ ST	SANTO TOME Y PRINCIPE
+ SN	SENEGAL
+ SRB	SERBIA
+ SM	SERBIA Y MONTENEGRO
+ SY	SEYCHELLES
+ WAL	SIERRA LEONA
+ APT	SIN PAIS
+ SGP	SINGAPUR
+ SYR	SIRIA
+ SP	SOMALIA
+ CL	SRI LANKA
+ SDN	SUDAN
+ S	SUECIA
+ CH	SUIZA
+ SME	SURINAM
+ SD	SWAZILANDIA
+ T	TAILANDIA
+ RC	TAIWAN
+ EAT	TANZANIA
+ TAD	TAYIKISTAN
+ PSE	Territorios Ocupados de Palestina
+ TMP	TIMOR ORIENTAL
+ TG	TOGO
+ TNG	TONGA
+ TT	TRINIDAD Y TOBAGO
+ TN	TUNEZ
+ TUR	TURKMENISTAN
+ TR	TURQUIA
+ UKR	UCRANIA
+ EAU	UGANDA
+ U	URUGUAY
+ UZB	UZBEKISTAN
+ VNT	VANUATU
+ V	VATICANO
+ YV	VENEZUELA
+ VN	VIETNAM
+ YEA	YEMEN
+ YU	YUGOSLAVIA
+ Z	ZAMBIA
+ RSR	ZIMBABWE
+
+Id: fecha_nacimiento
+EtiquetaWeb: Fecha Nacimiento
+Tipo: Fecha
+Obligatorio: Sí
+
+
+Id: Telefono
+EtiquetaWeb: Teléfono
+
+
+Id: Telefono_movil
+EtiquetaWeb: Teléfono móvil
+
+
+Id: correo_electronico
+EtiquetaWeb: Correo electrónico
+Tipo: Email
+Obligatorio: Sí
+
+Id: domicilio_calle
+EtiquetaWeb: Domicilio. Calle
+Obligatorio: Sí
+
+Id: domicilio_numero
+EtiquetaWeb: Domicilio. Número
+Obligatorio: Sí
+
+Id: domicilio_piso
+EtiquetaWeb: Domicilio. Piso y puerta
+Obligatorio: Sí
+
+Id: domicilio_poblacion
+EtiquetaWeb: Domicilio. Población
+Obligatorio: Sí
+
+Id: domicilio_codigo_postal
+EtiquetaWeb: Domicilio. Código postal
+Obligatorio: Sí
+
+
+Id: datos_adicionales
+EtiquetaWeb: Datos Adicionales
+Tipo: Seccion
+
+
+Id: familia_numerosa
+EtiquetaWeb: Familia numerosa
+Tipo: Desplegable
+Obligatorio: Sí
+Valor: No
+ Familia numerosa categoría especial
+ Familia numerosa categoría general
+
+
+Id: familia_numerosa_numero
+EtiquetaWeb: Familia numerosa. Número de título de familia numerosa
+
+
+Id: familia_numerosa_fecha_expedicion
+EtiquetaWeb: Familia numerosa. Fecha de expedición
+Tipo: Fecha
+
+
+Id: familia_numerosa_fecha_renovacion
+EtiquetaWeb: Familia numerosa. Fecha de renovación
+Tipo: Fecha
+
+
+Id: repetidor
+EtiquetaWeb: ¿Es alumno repetidor?
+Tipo: Desplegable
+Obligatorio: Sí
+Valor:
+	Sí
+	No
+
+
+Id: repetidor_cursos
+EtiquetaWeb: Cursos repetidos
+Observaciones: En caso de ser alumno repetidor, indique el curso que ha repetido
+
+
+Id: alumno_nuevo_en_el_centro
+EtiquetaWeb: ¿Alumno nuevo en el centro?
+Tipo: Desplegable
+Obligatorio: Sí
+Valor:
+ Sí
+ No
+
+
+Id: alumno_nuevo_en_el_centro_procedencia
+EtiquetaWeb: Centro de procedencia del alumno
+Observaciones: Rellenar en caso de provenir de otro centro
+
+
+Id: alumno_nuevo_en_el_centro_curso
+EtiquetaWeb: Curso y grupo de procedencia del alumno
+Observaciones: Rellenar en caso de provenir de otro centro
+
+
+Id: repite_en_primaria_ok
+EtiquetaWeb: ¿Has repetido algún curso en primaria?
+Tipo: Desplegable
+Valor:
+	Sí
+	No
+Obligatorio: Sí
+
+
+Id: repite_en_primaria_curso
+EtiquetaWeb: En caso de haber repetido. ¿Qué curso?
+
+
+Id: PadreMadreTutor1
+EtiquetaWeb: Padre/Madre/Tutor 1
+Tipo: Seccion
+
+
+Id: PadreMadreTutor1Tipo
+EtiquetaWeb: Padre/Madre/Tutor 1. Tipo
+Tipo: Desplegable
+Valor:
+ Padre
+ Madre
+ Tutor
+ Tutora
+Obligatorio: Sí
+
+
+Id: PadreMadreTutor1Apellido1
+EtiquetaWeb: Padre/Madre/Tutor 1. Primer Apellido
+Obligatorio: Sí
+
+
+Id: PadreMadreTutor1Apellido2
+EtiquetaWeb: Padre/Madre/Tutor 1. Segundo Apellido
+
+
+Id: PadreMadreTutor1Nombre
+EtiquetaWeb: Padre/Madre/Tutor 1. Nombre
+Obligatorio: Sí
+
+Id: PadreMadreTutor1DniTipo
+EtiquetaWeb: Padre/Madre/Tutor 1. Tipo DNI-NIE-Pasaporte
+Tipo: Desplegable
+Obligatorio: Sí
+Valor:
+ DNI
+ NIE
+ Pasaporte
+
+
+Id: PadreMadreTutor1Apellido1Dni
+EtiquetaWeb: Padre/Madre/Tutor 1. DNI-NIE-Pasaporte
+Obligatorio: Sí
+
+
+Id: PadreMadreTutor1Fecha
+EtiquetaWeb: Padre/Madre/Tutor 1. Fecha de nacimiento
+Tipo: Fecha
+
+Id: PadreMadreTutor1Telefono
+EtiquetaWeb: Padre/Madre/Tutor 1. Teléfono
+Obligatorio: Sí
+
+Id: PadreMadreTutor1Telefono2
+EtiquetaWeb: Padre/Madre/Tutor 1. Otro Teléfono
+
+Id: PadreMadreTutor1Email
+EtiquetaWeb: Padre/Madre/Tutor 1. Correo electrónico
+
+Id: PadreMadreTutor1Direccion
+EtiquetaWeb: Padre/Madre/Tutor 1. Dirección
+Obligatorio: Sí
+
+Id: PadreMadreTutor1Población
+EtiquetaWeb: Padre/Madre/Tutor 1. Población
+Obligatorio: Sí
+
+Id: PadreMadreTutor1CodigoPostal
+EtiquetaWeb: Padre/Madre/Tutor 1. Código Postal
+Obligatorio: Sí
+
+
+
+
+Id: PadreMadreTutor2
+EtiquetaWeb: Padre/Madre/Tutor 2
+Tipo: Seccion
+
+
+Id: PadreMadreTutor2Tipo
+EtiquetaWeb: Padre/Madre/Tutor 2. Tipo
+Tipo: Desplegable
+Valor:
+ Padre
+ Madre
+ Tutor
+ Tutora
+
+
+Id: PadreMadreTutor2Apellido1
+EtiquetaWeb: Padre/Madre/Tutor 2. Primer Apellido
+
+
+Id: PadreMadreTutor2Apellido2
+EtiquetaWeb: Padre/Madre/Tutor 2. Segundo Apellido
+
+
+Id: PadreMadreTutor2Nombre
+EtiquetaWeb: Padre/Madre/Tutor 2. Nombre
+
+Id: PadreMadreTutor2DniTipo
+EtiquetaWeb: Padre/Madre/Tutor 2. Tipo DNI-NIE-Pasaporte
+Tipo: Desplegable
+Valor:
+ DNI
+ NIE
+ Pasaporte
+
+
+Id: PadreMadreTutor2Apellido1Dni
+EtiquetaWeb: Padre/Madre/Tutor 2. DNI-NIE-Pasaporte
+
+
+Id: PadreMadreTutor2Fecha
+EtiquetaWeb: Padre/Madre/Tutor 2. Fecha de nacimiento
+Tipo: Fecha
+
+Id: PadreMadreTutor2Telefono
+EtiquetaWeb: Padre/Madre/Tutor 2. Teléfono
+
+Id: PadreMadreTutor2Telefono2
+EtiquetaWeb: Padre/Madre/Tutor 2. Otro Teléfono
+
+Id: PadreMadreTutor2Email
+EtiquetaWeb: Padre/Madre/Tutor 2. Correo electrónico
+
+Id: PadreMadreTutor2Convive
+EtiquetaWeb: Padre/Madre/Tutor 2. ¿Vive en el domicilio familiar?
+
+Id: PadreMadreTutor2Direccion
+EtiquetaWeb: Padre/Madre/Tutor 2. Dirección
+
+Id: PadreMadreTutor2Población
+EtiquetaWeb: Padre/Madre/Tutor 2. Población
+
+Id: PadreMadreTutor2CodigoPostal
+EtiquetaWeb: Padre/Madre/Tutor 2. Código Postal
+
+
+Id: Otros datos
+EtiquetaWeb: Otros datos
+Tipo: Seccion
+
+Id: DniGestiones
+EtiquetaWeb: DNI-NIE-pasaporte del padre/madre/tutor para hacer gestiones en el centro
+Obligatorio: Sí
+
+Id: TelefonoContacto
+EtiquetaWeb: Teléfono de contacto padre, madre o tutor
+Obligatorio: Sí
+
+Id: AMPA
+EtiquetaWeb: Permite que su correo sea facilitado a la Asociación de Madres Padres
+Tipo: Desplegable
+Valor: Sí
+ No
+
+Id: SalirSeptima
+EtiquetaWeb: Permite la autorización de salida a 7ª hora cuando no hay profesor
+Tipo: Desplegable
+Valor: Sí
+ No
+
+Id: Extraescolares
+EtiquetaWeb: Permite la autorización de salidas extraescolares
+Tipo: Desplegable
+Valor: Sí
+ No
+
+

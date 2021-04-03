@@ -1,0 +1,132 @@
+Titulo: Matrícula Ciclos Formativos - Educación infantil modalidad a distancia
+LateralPDF: Matrícula Ciclos Formativos - Educación infantil modalidad a distancia:
+ {Apellido1} {Apellido2}, {Nombre}
+CabeceraPDF: IES Villablanca. Matrícula Ciclos Formativos - Educación infantil modalidad a distancia
+ {curso_academico}
+PDF:
+ this.datosIES = "IES VILLABLANCA\nC/Villablanca, 79 - 28032 Madrid\nTeléfono 91 775 22 14 Fax 91 778 85 77\nCorreo ies.villablanca.madrid@educa.madrid.org\nC.C. 28039891";
+ this.cabeceraEstandar = false;
+ this.generarPDFEstandar(campos);
+MensajeFormularioAceptado: Se va a generar un fichero PDF que se descargará en su equipo. Imprima dos copias y llévelas a la Secretaría del Centro con el resto de documentación solicitada.
+Incluir: pie_de_firma.txt
+
+
+
+Id: Seccion1
+EtiquetaWeb: Matrícula Ciclos Formativos - Educación infantil modalidad a distancia
+Tipo: Seccion
+
+Id: Label1
+Tipo: Etiqueta
+EtiquetaPDF:
+EtiquetaWeb:
+	<p>Junto a la solicitud de matrícula, que tiene a continuación, hay que que adjuntar FOTOCOPIAS de la siguiente documentación:</p>
+	<ul>
+	<li>DNI/NIE del alumno. En el caso de no tener DNI o NIE, el libro de familia</li>
+	<li>DNI/NIE del padre, madre o tutor</li> <li>Boletín de notas del curso anterior</li>
+	<li>Resguardo del impreso de adjudicación de módulos (se da después del acto público de adjudicación de módulos)</li>
+	</ul>
+	<p><strong>Pago del seguro escolar</strong>: Los menores de 28 años deberán abonar 1,12€ en el número de cuenta  ES67 2038 1786 1060 0006 2504 (Bankia). En el concepto deberán hacer constar nombre y apellidos del alumno.<br>
+	<strong>Tasas para grado superior</strong>: Según la orden 9622/2012, de 10 de agosto, de la Consejería de Educación, Juventud y Deporte los alumnos satisfarán el importe total de las tarifas al formalizar la matrícula, o bien podrán fraccionarlo en dos plazos, el 50 por 100 a la formalización y el resto en la segunda quincena del mes de diciembre, debiendo indicar tal circunstancia en el apartado correspondiente del impreso de matriculación.<br> Una vez se haya abonado el importe establecido, se procederá a solicitar la formalización de la matrícula en la Secretaría del Centro docente. Para ello, el alumno entregará la documentación exigida acompañada de la copia para el Centro del ejemplar de autoliquidación y del ejemplar de matriculación. Comprobada la documentación presentado y el correcto abono de las tarifas, se formalizará la matrícula, conservándose por la Secretaría del Centro el ejemplar de la autoliquidación, así como la documentación restante.<br> Una vez resuelta la convocatoria de becas o ayudas, los alumnos que hayan resultado beneficiarios de las mismas deberán presentar la credencial correspondiente en la Secretaría del Centro. Los centros llevarán el adecuado control de los alumnos que se encuentren en estas circunstancias, al objeto de asegurar el cumplimiento de esta previsión.</p>
+	<p>El pago de las tasas se puede realizar por teléfono móvil, tarjeta, transferencia o pago presencial. Las modalidades de pago son:</p>
+	<ul>
+	<li>Pago del curso completo</li> <li>Pago del curso completo fraccionado en dos pagos</li>
+	<li>Pago de módulos pendientes</li>
+	<li>Pago de módulos pendientes en dos pagos</li> </ul> <p>En el siguiente enlace se puede encontrar un manual de cómo realizar el pago:</p> <p><a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/modelo-030.pdf" title="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/modelo-030.pdf">https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/modelo-030.pdf</a></p>
+	<p>Convalidaciones: En el caso de solicitar convalidaciones, se pueden adjuntar con la matrícula:</p> <ul> <li><a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/Informacion-para-alumnos-Convalidación.pdf">Instrucciones de convalidación.</a></li>
+	<li><a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/Solicitud-de-Convalidaciones-LOE-Anexo-X.pdf">Solicitud convalidación FP </a></li>
+	</ul>
+	<p><strong>Tratamiento de los datos personales:</strong></p>
+
+	<p>En el siguiente enlace hay información sobre protección de los datos de carácter personal recogidos en esta instancia:</p>
+	<a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+
+
+Incluir: datos_personales_fp.txt
+
+
+Id: Seccion_Asignaturas
+EtiquetaWeb: Datos académicos
+Tipo: Seccion
+
+
+Id: Label_seleccion_modulos
+Tipo: Etiqueta
+EtiquetaWeb: Seleccione los módulos en los que se va a matricular:
+
+
+Id: Ingles
+EtiquetaWeb: · Inglés
+Tipo: Checkbox
+
+Id: Recursos
+EtiquetaWeb:  · Recursos didácticos del inglés
+Tipo: Checkbox
+
+Id: Didactica
+EtiquetaWeb:  · Didáctica de la educación infantil
+Tipo: Checkbox
+
+Id: Autonomia_personal
+EtiquetaWeb:  · Autonomía personal y salud infantil
+Tipo: Checkbox
+
+Id: Juego
+EtiquetaWeb:  · El juego infantil y su metodología
+Tipo: Checkbox
+
+Id: Expresión
+EtiquetaWeb:  · Expresión y comunicación
+Tipo: Checkbox
+
+Id: Desarrollo_cognitivo
+EtiquetaWeb: · Desarrollo cognitivo y motor
+Tipo: Checkbox
+
+Id: Desarrollo_socio_afectivo
+EtiquetaWeb: · Desarrollo socio afectivo
+Tipo: Checkbox
+
+Id: Habilidades
+EtiquetaWeb: · Habilidades sociales
+Tipo: Checkbox
+
+Id: Intervencion
+EtiquetaWeb: · Intervención con familias y atención a menores en riesgo social
+Tipo: Checkbox
+
+Id: Proyecto
+EtiquetaWeb: · Proyecto de atención a la infancia
+Tipo: Checkbox
+Observaciones: Sólo se puede matricular en este módulo, cuando se hayan superado el resto de los módulos, o bien, o con un módulo no asociado a unidad de competencia.
+
+Id: PPAA
+EtiquetaWeb: · Primeros auxilios
+Tipo: Checkbox
+
+Id: FOL
+EtiquetaWeb: · Formación y Orientación Familiar
+Tipo: Checkbox
+
+Id: Empresa
+EtiquetaWeb: · Empresa e iniciativa emprendedora
+Tipo: Checkbox
+
+Id: FCT
+EtiquetaWeb: · Formación en Centros de Trabajo
+Tipo: Checkbox
+Observaciones: Sólo se puede matricular en este módulo, cuando se hayan superado el resto de los módulos, o bien, o con un módulo no asociado a unidad de competencia.
+
+Id: PoliticaPrivacidad
+EtiquetaWeb: He leído y acepto la POLÍTICA DE PRIVACIDAD EN C.D. DE LA C. DE MADRID
+Tipo: Desplegable
+Valor:
+ Sí
+Obligatorio: Sí
+Observaciones: <a target="_blank" href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+
+
+
+
+
+

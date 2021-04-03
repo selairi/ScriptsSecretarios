@@ -1,0 +1,101 @@
+Titulo: Ejemplo de formulario
+CabeceraPDF: Esta es
+	la cabecera
+LateralPDF: Ejemplo de formulario: {Apellidos}, {Nombre}
+PiePDF: Este es
+	el pie
+PDF: this.dibujarBanderaEuropa(10,10);
+	this.nuevaPagina();
+	this.generarPDFEstandar(campos);
+	this.print("Hola mundo");
+
+
+
+Id: Reordenar
+EtiquetaWeb: Reordenar valores
+Tipo: Reorden
+Valor: Primero
+	Segundo
+	Tercero
+	Cuarto
+
+Id: Seccion1
+EtiquetaWeb: Sección 1
+Tipo: Seccion
+
+Incluir: ejemplo2.txt
+
+
+Id: Nombre
+EtiquetaWeb: Nombre
+
+
+Id: Apellidos
+EtiquetaWeb: Apellidos
+
+
+
+Id: Hola
+EtiquetaWeb: Mundo
+	Otra línea
+EtiquetaPDF: Adios
+Tipo: Texto
+
+
+Id: Otro
+EtiquetaWeb: 3
+EtiquetaPDF: 2
+Obligatorio: Sí
+
+Id: Seccion
+EtiquetaWeb: Sección 2
+Tipo: Seccion
+
+Id: check
+EtiquetaWeb: 3
+EtiquetaPDF: 2
+Tipo: Checkbox
+Obligatorio: Sí
+
+
+Id: email
+EtiquetaWeb: 4
+EtiquetaPDF: 2
+Tipo: Email
+Obligatorio: Sí
+
+
+Id: select
+EtiquetaWeb: 4
+EtiquetaPDF: 2
+Tipo: Desplegable
+Valor:
+	1
+	2
+	3
+	4
+Obligatorio: Sí
+
+Id: Label
+EtiquetaWeb: Ejemplo de label
+Tipo: Etiqueta
+
+Id: FEcha
+EtiquetaWeb: Ejemplo de label
+Tipo: Fecha
+Obligatorio: Sí
+
+Id: imagen
+EtiquetaWeb: Imagen
+Tipo: Foto
+Obligatorio: No
+
+Id: Label2
+EtiquetaPDF: Ejemplo de label
+Tipo: Etiqueta
+
+Id: archivo1
+EtiquetaWeb: Ejemplo de archivo
+Tipo: Archivo
+Obligatorio: Sí
+Valor: application/pdf

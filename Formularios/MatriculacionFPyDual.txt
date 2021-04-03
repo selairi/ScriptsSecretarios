@@ -1,0 +1,89 @@
+Titulo: Matrícula Ciclos Formativos
+LateralPDF: {Ciclo}:
+ {Apellido1} {Apellido2}, {Nombre}
+CabeceraPDF: IES Villablanca. Matrícula ciclos formativos.
+ {curso_academico}
+PDF:
+ this.datosIES = "IES VILLABLANCA\nC/Villablanca, 79 - 28032 Madrid\nTeléfono 91 775 22 14 Fax 91 778 85 77\nCorreo ies.villablanca.madrid@educa.madrid.org\nC.C. 28039891";
+ this.cabeceraEstandar = false;
+ this.generarPDFEstandar(campos);
+MensajeFormularioAceptado: Se va a generar un fichero PDF que se descargará en su equipo. Imprima dos copias y llévelas a la Secretaría del Centro con el resto de documentación solicitada.
+Incluir: pie_de_firma.txt
+
+
+
+Id: Seccion1
+EtiquetaWeb: Matrícula Ciclos Formativos
+Tipo: Seccion
+
+Id: Label1
+Tipo: Etiqueta
+EtiquetaPDF:
+EtiquetaWeb:
+	<p>Junto a la solicitud de matrícula, que tiene a continuación, hay que que adjuntar FOTOCOPIAS de la siguiente documentación:</p>
+	<ul>
+	<li>DNI/NIE del alumno. En el caso de no tener DNI o NIE, el libro de familia</li>
+	<li>DNI/NIE del padre, madre o tutor</li> <li>Boletín de notas del curso anterior</li>
+	</ul>
+	<p><strong>Pago del seguro escolar</strong>: Los menores de 28 años deberán abonar 1,12€ en el número de cuenta  ES67 2038 1786 1060 0006 2504 (Bankia). En el concepto deberán hacer constar nombre y apellidos del alumno.<br>
+	<strong>Tasas para grado superior</strong>: Según la orden 9622/2012, de 10 de agosto, de la Consejería de Educación, Juventud y Deporte los alumnos satisfarán el importe total de las tarifas al formalizar la matrícula, o bien podrán fraccionarlo en dos plazos, el 50 por 100 a la formalización y el resto en la segunda quincena del mes de diciembre, debiendo indicar tal circunstancia en el apartado correspondiente del impreso de matriculación.<br> Una vez se haya abonado el importe establecido, se procederá a solicitar la formalización de la matrícula en la Secretaría del Centro docente. Para ello, el alumno entregará la documentación exigida acompañada de la copia para el Centro del ejemplar de autoliquidación y del ejemplar de matriculación. Comprobada la documentación presentado y el correcto abono de las tarifas, se formalizará la matrícula, conservándose por la Secretaría del Centro el ejemplar de la autoliquidación, así como la documentación restante.<br> Una vez resuelta la convocatoria de becas o ayudas, los alumnos que hayan resultado beneficiarios de las mismas deberán presentar la credencial correspondiente en la Secretaría del Centro. Los centros llevarán el adecuado control de los alumnos que se encuentren en estas circunstancias, al objeto de asegurar el cumplimiento de esta previsión.</p>
+	<p>El pago de las tasas se puede realizar por teléfono móvil, tarjeta, transferencia o pago presencial. Las modalidades de pago son:</p>
+	<ul>
+	<li>Pago del curso completo</li> <li>Pago del curso completo fraccionado en dos pagos</li>
+	<li>Pago de módulos pendientes</li>
+	<li>Pago de módulos pendientes en dos pagos</li> </ul> <p>En el siguiente enlace se puede encontrar un manual de cómo realizar el pago:</p> <p><a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/modelo-030.pdf" title="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/modelo-030.pdf">https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/modelo-030.pdf</a></p>
+	<p>Convalidaciones: En el caso de solicitar convalidaciones, se pueden adjuntar con la matrícula:</p> <ul> <li><a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/Informacion-para-alumnos-Convalidación.pdf">Instrucciones de convalidación.</a></li>
+	<li><a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/Solicitud-de-Convalidaciones-LOE-Anexo-X.pdf">Solicitud convalidación FP </a></li>
+	</ul>
+	<p><strong>Tratamiento de los datos personales:</strong></p>
+
+	<p>En el siguiente enlace hay información sobre protección de los datos de carácter personal recogidos en esta instancia:</p>
+	<a href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+
+
+Incluir: datos_personales_fp.txt
+
+
+Id: Seccion_Asignaturas
+EtiquetaWeb: Datos académicos
+Tipo: Seccion
+
+
+Id: curso
+EtiquetaWeb: Curso
+Tipo: Opciones
+Obligatorio: Sí
+Valor: 1
+ 2
+Observaciones: Seleccione el curso en el que desee matricularse.
+
+
+Id: Ciclo
+EtiquetaWeb: Ciclo Formativo
+Tipo: Desplegable
+Valor:
+ Grado Medio: Sistemas Microinformáticos y Redes
+ Grado Medio: Gestión Administrativa
+ Grado Medio: Electromecánica
+ Grado Medio: Carrocería
+ Grado Superior: Administración y Finanzas
+ Grado Superior: Administración de Sistemas Informáticos en Red
+ Grado Superior: Educación Infantil
+ Grado Superior: Educación Infantil (Dual)
+ Grado Superior: Desarrollo de Aplicaciones Multiplataforma
+Observaciones: Seleccione el ciclo formativo en el que se va a matricular
+Obligatorio: Sí
+
+Id: PoliticaPrivacidad
+EtiquetaWeb: He leído y acepto la POLÍTICA DE PRIVACIDAD EN C.D. DE LA C. DE MADRID
+Tipo: Desplegable
+Valor:
+ Sí
+Obligatorio: Sí
+Observaciones: <a target="_blank" href="https://site.educa.madrid.org/ies.villablanca.madrid//wp-content/uploads/ies.villablanca.madrid/2020/06/POLITICA-DE-PRIVACIDAD_MATRICULA_.pdf">Política de Privacidad</a>
+
+
+
+
+
+

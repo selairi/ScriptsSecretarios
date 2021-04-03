@@ -1,0 +1,10 @@
+Id: Hola2
+EtiquetaWeb: Mundo
+	Otra línea
+EtiquetaPDF: Adios
+Tipo: Texto
+
+
+Id: Otro2
+EtiquetaWeb: 3
+EtiquetaPDF: 2
