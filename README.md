@@ -1,5 +1,5 @@
 # ScriptsSecretarios
-Mis scrips útiles para las tareas de los Secretarios de los IES
+Mis scrips útiles para las tareas de los Secretarios de los IES.
 
 Los script está pensado para ser ejecutados bajo Linux Ubuntu.
 
@@ -11,3 +11,6 @@ git clone https://github.com/selairi/ScriptsSecretarios.git
 
 Descargará el proyecto. Hay un archivo "Leeme" en cada carpeta con documentación sobre cómo usarlo.
 
+También es útil el siguiente script, que está en un repositorio a parte, que permite modifcar archivos PDF:
+
+[https://github.com/selairi/PDFMovePages](https://github.com/selairi/PDFMovePages)
