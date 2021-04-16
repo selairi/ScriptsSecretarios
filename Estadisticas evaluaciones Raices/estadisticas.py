@@ -3,8 +3,9 @@ import glob
 import csv
 
 NOTAS = ['NE', 'IN', 'SU', 'BI', 'NT', 'SB', 'MH', ' 1', ' 2', '3', '4', '5', '6', '7', '8', '9', '10', 'APTO']
-APROBADO = ['5', '6', '7', '8', '9', '10', 'APTO', 'SU 5', 'BI 6', 'NT 7','NT 8', 'SB 9', 'SB 10','MH']
-SUSPENSO = ['NE', 'IN 1', 'IN 2', 'IN 3', 'IN 4', '1', '2', '3', '4']
+APROBADO = ['5', '6', '7', '8', '9', '10', 'APTO', 'SU 5', 'BI 6', 'NT 7','NT 8', 'SB 9', 'SB 10','MH', '10-M', '10-MH', 'APTO', 'NO AP']
+SUSPENSO = ['NE', 'IN 1', 'IN 2', 'IN 3', 'IN 4', '0', '1', '2', '3', '4', 'NP', 'NS']
+NOTAS_IGNORADAS = ['EX', 'PC', 'RE', 'APL'] # Exento, Pendiente de calificación, Renuncia a convocatoria, Aplaza
 
 def contiene(texto, lista):
     for l in lista:
@@ -46,6 +47,11 @@ class Materia:
 
     def suspensa(self):
         if es_igual(self.nota, SUSPENSO):
+            return True
+        return False
+
+    def exento(self):
+        if es_igual(self.nota, NOTAS_IGNORADAS):
             return True
         return False
 
@@ -107,6 +113,8 @@ class Procesar:
                                 indice = l.index('   ')
                                 materia = l[:indice].strip()
                                 nota = l[indice:].replace('AC', '').replace('RE', '').strip()
+                                # De la nota sólo se toman los 5 últimos caracteres
+                                nota = nota[-5:].strip()
                         if not alumno in self.alumnos.keys():
                             self.alumnos[alumno] = Alumno(alumno, n_expediente)
                             self.alumnos[alumno].unidad = unidad
@@ -130,6 +138,9 @@ def calcular_aprobados_suspensos(alumnos):
                 materias[m.materia].aprobado()
             elif m.suspensa():
                 materias[m.materia].suspenso()
+            elif m.exento():
+                # No se tiene en cuenta la calificación
+                pass
             else:
                 print('Error: No se encuentra la calificación de la materia')
                 print(alumno.nombre, alumno.unidad, m.toTexto())
